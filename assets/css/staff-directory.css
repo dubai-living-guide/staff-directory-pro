@@ -1,0 +1,176 @@
+/* Both! */
+.staff-member 
+{
+	clear: both;
+	margin-bottom: 40px;
+	min-height: 150px;
+}
+.staff-member .staff-photo
+{
+	border: 1px solid #989898;
+    float: left;
+    margin: 5px 30px 30px 0;
+	max-width: 170px;
+}
+.staff-member .staff-photo img
+{
+    float: left;
+    margin: 8px;
+    max-width: 100%;
+}
+
+	/* "Circles" avatars */
+	.circles .staff-member .staff-photo
+	{
+		border-radius: 150px
+	}
+	.circles .staff-member .staff-photo img
+	{
+		border-radius: 150px;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 1) inset;
+		float: left;
+		margin: 8px;
+		max-width: 100%;
+	}
+
+.staff-member .staff-member-right
+{
+	margin-left: 200px;
+}
+.staff-member .staff-member-title
+{
+	margin: 0 0 10px;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+.staff-member .staff-member-contacts
+{
+
+}
+
+.staff-member .staff-member-contacts h4
+{
+	font-size: 17px;
+	font-variant: small-caps;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.staff-member .staff-member-contacts p
+{
+	margin-bottom: 5px;
+}
+
+.staff-member .staff-member-contacts strong
+{
+	color: #373737;
+}
+
+/* Staff List */
+.staff-list
+{
+
+}
+.staff-list .staff-member h3
+{
+	font-size: 24px;
+	color: #373737;
+	font-weight: bold;
+	text-transform: none;
+	letter-spacing: normal;
+	clear: right;
+	margin: 0 0 10px;
+	line-height: normal;
+}
+.staff-list .staff-member .staff-member-title
+{
+	margin: 0 0 10px;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+/* Staff Grid */
+.staff-grid
+{
+
+}
+.staff-grid .staff-member {
+    clear: both;
+    display: inline-block;
+    margin-bottom: 20px;
+    margin-right: 20px;
+    min-height: 150px;
+}
+
+.staff-grid .staff-photo
+{
+	border: 1px solid #cecece;
+	margin: 0;
+}
+.staff-grid .staff-photo img {
+	margin: 3px;
+}
+.staff-grid .staff-member-wrap {
+	position: relative;
+	overflow: hidden;
+	display: inline-block;
+}
+
+.staff-grid .staff-member-overlay {
+	background: rgba(30, 144, 255, 0.8);
+	padding: 4px 8px;
+	position: absolute;
+	min-height: 40px;
+	left: 0;
+	right: 0;
+	top: auto;
+	bottom: 0;
+}
+
+.staff-grid .staff-member h3
+{
+	font-size: 16px;
+	color: #fff;
+	font-weight: bold;
+	text-transform: none;
+	letter-spacing: normal;
+	clear: right;
+	margin: 0;
+	line-height: normal;	
+}
+
+.staff-grid .staff-member h3 a
+{
+	color: #fff;
+}
+.staff-grid .staff-member .staff-member-title
+{
+	font-size: 12px;
+	color: #fff;
+	margin: 3px 0 0;
+	text-transform: uppercase;
+}
+
+
+/* Single Staff Member Template */
+.single-staff-member {
+	padding: 0 40px;
+}
+.single-staff-member  .staff-photo
+{
+	max-width: 230px;	
+}
+.single-staff-member  .staff-photo img
+{
+	max-width: 200px;	
+}
+.single-staff-member .staff-member-right{
+	margin-left: 260px;
+}
+.single-staff-member .single-staff-member .staff-member-name {
+    font-size: 35px;
+    font-weight: bold;
+	clear: right;
+	line-height: normal;
+	margin-bottom: 10px;
+}
