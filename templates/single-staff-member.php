@@ -17,7 +17,7 @@
 			<div class="staff-member-contacts">
 				<h4>Contact</h4>
 				<?php if ($my_phone): ?><p class="staff-member-phone"><strong>Phone:</strong> <?php echo $my_phone ?></p><?php endif; ?>
-				<?php if ($my_email): ?><p class="staff-member-email"><strong>Email:</strong> <a href="<?php echo $my_email ?>"><?php echo $my_email ?></a></p><?php endif; ?>
+				<?php if ($my_email): ?><p class="staff-member-email"><strong>Email:</strong> <a href="mailto:<?php echo $my_email ?>"><?php echo $my_email ?></a></p><?php endif; ?>
 			</div>
 			<?php endif; ?>
 		</div>
