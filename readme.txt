@@ -3,8 +3,8 @@ Contributors: richardgabriel, ghuger
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=V7HR8DP4EJSYN
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
-Tested up to: 4.0
-Stable tag: 1.1
+Tested up to: 4.1.1
+Stable tag: 1.1.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,9 @@ Never!  Easy is in our name!  If by complicated you mean new and easy to use fea
 == Screenshots ==
 
 == Changelog ==
+
+= 1.1.1 =
+* Compatibility update for WP 4.1.1.
 
 = 1.1 =
 * Fix: address issue with incorrectly formatted e-mail link.
