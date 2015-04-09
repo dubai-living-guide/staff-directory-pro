@@ -123,7 +123,7 @@
 	min-height: 40px;
 	left: 0;
 	right: 0;
-	top: auto;
+	top: 0;
 	bottom: 0;
 }
 
@@ -154,7 +154,18 @@
 
 /* Single Staff Member Template */
 .single-staff-member {
-	padding: 0 40px;
+	padding: 0px;
+}
+.staff-member.single-staff-member h3
+{
+	font-size: 24px;
+	color: #373737;
+	font-weight: bold;
+	text-transform: none;
+	letter-spacing: normal;
+	clear: right;
+	margin: 0 0 10px;
+	line-height: normal;
 }
 .single-staff-member  .staff-photo
 {
@@ -165,7 +176,7 @@
 	max-width: 200px;	
 }
 .single-staff-member .staff-member-right{
-	margin-left: 260px;
+	margin-left: 200px;
 }
 .single-staff-member .single-staff-member .staff-member-name {
     font-size: 35px;

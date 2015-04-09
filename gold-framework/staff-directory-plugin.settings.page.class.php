@@ -20,22 +20,23 @@ class StaffDirectoryPlugin_SettingsPage
 		$this->root = $root;
 		$this->plugin_title = $root->plugin_title;
         add_action( 'admin_init', array( $this, 'create_settings' ) );
-		add_action( 'admin_menu', array( $this, 'add_menus' ), 10 );		        
-		add_action('admin_head', array($this, 'output_admin_styles'));
+		add_action( 'admin_menu', array( $this, 'add_menus' ), 10 );		   
+		
+		//add stylesheet for admin
+		add_action( 'admin_init', array($this,'admin_init') );
     }
-
-    public function add_menus()
-	{
-/* 		add_menu_page( 
-			$this->plugin_title . ' Settings',
-			$this->plugin_title, 
-			$this->root->prefix . '-settings',
-			'manage_options',
-			array( $this, 'output_settings_page' )
-		); */
-		// Because we want the main menu to be called "Before & After", but the first menu to be called "Settings", we'll need to override the title now by creating a duplicate menu with the correct title ("Settings")
-		add_submenu_page('edit.php?post_type=staff-member', $this->root->plugin_title . ' Settings', 'Settings', 'manage_options', $this->root->prefix . '-settings', array( $this, 'output_settings_page' ) );	
-	}
+	
+	public function add_menus(){
+		$title = $this->plugin_title . " Settings";
+		$page_title = $this->plugin_title . " Settings";
+		$top_level_slug = $this->root->prefix . "-settings";
+		
+		//create new top-level menu
+		add_menu_page($page_title, $title, 'administrator', $top_level_slug, array($this, 'output_settings_page'));
+		add_submenu_page($top_level_slug , 'Basic Options', 'Basic Options', 'administrator', $top_level_slug, array($this, 'output_settings_page'));
+		add_submenu_page($top_level_slug , 'Help & Instructions', 'Help & Instructions', 'administrator', 'company-directory-help', array($this, 'help_settings_page'));
+	} 
+	
     public function add_settings_group($group, $key, $display, $type = 'text')
 	{
 	
@@ -53,12 +54,32 @@ class StaffDirectoryPlugin_SettingsPage
             array( $this, 'sanitize' ) // Sanitize
         );
 		
+		//general settings
+		 add_settings_section(
+            'general', // ID
+            'Basic Options', // Title
+            array( $this, 'print_general_section_info' ), // Callback
+            'sd_general_settings' // Page
+        );    
+		
+		//need to do this so these are output after the registration info
+		$this->registered_sections[] = 'sd_general_settings';
+		
+		//we don't need to add this to the registered sections array as these options are directly called
 		//registration settings
 		 add_settings_section(
             'registration', // ID
-            'Upgrade to Staff Directory Pro to Unlock Additional Features and Support!', // Title
+            'Pro Registration', // Title
             array( $this, 'print_registration_section_info' ), // Callback
             'sd_registration_settings' // Page
+        );  
+		
+        add_settings_field(
+            'sd_custom_css', // ID
+            'Custom CSS', // Title 
+            array( $this, 'custom_css_callback' ), // Callback
+            'sd_general_settings', // Page
+            'general' // Section           
         );  
 
         add_settings_field(
@@ -129,7 +150,7 @@ class StaffDirectoryPlugin_SettingsPage
 		$args['title']= $title;
 		$args['type']= $type;
 		$args['value']= ''; // TODO: should this be a default? the current value (as pulled from the database?)
-		//die($id);
+
 		// Register the setting with WordPress
         add_settings_field(
             $id, // ID :: This is specified by $id param
@@ -205,60 +226,53 @@ class StaffDirectoryPlugin_SettingsPage
      * Options page callback
      */
     public function output_settings_page()
-    {
-		// save settings if needed
-		if (isset($_POST["update_settings"]))
-		{
-			// save registration keys if provided
-			$reg_keys = array('sd_api_key', 'sd_registration_email');
-			foreach($reg_keys as $name) {
-				if (isset($_POST[$name])) {
-					$val = esc_attr($_POST[$name]);
-					update_option($name, $val);
-				}
-			}			
-		}
-	
+    {	
 		// Set class property
         $this->options = get_option( 'sd_options' );
+		
+		$this->settings_page_top();
         ?>		
-		<?php //$this->output_register_plugin_style(); ?>			
-        <div class="wrap">
-            <div id="icon-options-general" class="icon32"></div>
-            <h2><?php echo htmlentities($this->plugin_title)?> Settings</h2>           			
-			<form method="post" action="">
+            <div id="icon-options-general" class="icon32"></div>         			
+			<form method="post" action="options.php">
 				<?php
 					// This prints out all hidden setting fields
 					settings_fields( 'sd_option_group' );
-				?>
+				?>	
 				<?php if (!	$this->root->is_pro()):?>
+					<p class="plugin_is_not_registered">✘ Your plugin is not registered and activated. You will not be able to use the PRO features until you upgrade. <a href="http://goldplugins.com/our-plugins/company-directory/upgrade-to-company-directory-pro/?utm_source=registration_fields" target="_blank">Click here</a> to upgrade today!</p>
 					<div class="sd_registration_settings register_plugin">
 					<?php do_settings_sections( 'sd_registration_settings' ); ?>
 					<?php submit_button(); ?>			
 					</div>
-				<? else: ?>
+				<?php else: ?>
 					<div class="register_plugin is_registered">
-						<h3>Staff Directory Pro Activated</h3>
-						<p><strong>This copy of Staff Directory Pro is registered to <a href="mailto:<?php echo $this->options['registration_email']; ?>"><?php echo htmlentities($this->options['registration_email']); ?></a> for <a href="//<?php echo $this->options['registration_url']; ?>" target="_blank"><?php echo htmlentities($this->options['registration_url']); ?></a>.</strong></p>
+						<h3>Pro Registration</h3>
+						<p class="plugin_is_registered">✓ Staff Directory Pro is registered and activated. Thank you!</p>
 						<?php $this->output_hidden_registration_fields(); ?>
 					</div>
 				<?php endif; ?>
 				<?php
 					// Output each registered settings group
-					foreach ($this->registered_sections as $registered_section) {
-						do_settings_sections( $registered_section );
-					}
+					if(count($this->registered_sections) > 0){
+						foreach ($this->registered_sections as $registered_section) {
+							do_settings_sections( $registered_section );
+						}
 					
-					// output the "Save Settings" button at the end
-					submit_button();
+						// output the "Save Settings" button at the end
+						submit_button();
+					}
 				?>
-				
             </form>
-			<?php if ( !$this->root->is_pro() ) { $this->output_mailing_list_form(); } ?>
         </div>		
         <?php
     }
 
+	//help page / documentation
+	function help_settings_page(){		
+		$this->settings_page_top();
+		
+		include(plugin_dir_path( __FILE__ ) . '../assets/pages/help.html');
+	}	
 
     /**
      * Sanitize each setting field as needed
@@ -284,6 +298,10 @@ class StaffDirectoryPlugin_SettingsPage
 				case 'registration_email':
 					$new_input[$key] = sanitize_text_field( $input[$key] );
 				break;			
+				
+				case 'custom_css':
+					$new_input[$key] = $input[$key]; //TBD: figure out proper sanitizing for CSS!
+				break;
 
 				default: // don't let any settings through unless they were whitelisted. (skip unknown settings)
 					continue;
@@ -307,14 +325,25 @@ class StaffDirectoryPlugin_SettingsPage
 	
     /** 
      * Print the Section text
-     */
+     */	
+    public function print_general_section_info()
+    {
+		echo '<p>The below options can be used to control various bits of output by the plugin.</p>';
+    }
+	
+    public function custom_css_callback()
+    {
+        printf(
+            '<textarea id="custom_css" name="sd_options[custom_css]" style="width:450px" />%s</textarea>',
+            isset( $this->options['custom_css'] ) ? esc_attr( $this->options['custom_css']) : ''
+        );
+    }
+	
     public function print_registration_section_info()
     {
-		echo '<p><em><a href="http://goldplugins.com/our-plugins/staff-directory/?utm_source=b_a_plugin&utm_campaign=upgrade&is_pro=0" target="_blank">Click here to purchase Staff Directory Pro.</a> You will receive your API keys by email as soon as you purchase.</a></em></p>';
-		print '<strong>Enter your registration information below to enable Staff Directory Pro:</strong>';
+		echo '<p>Fill out the fields below, if you have purchased the pro version of the plugin, to activate additional features such as the Table or Grid layouts.</p>';
     }
-
-	
+		
     public function api_key_callback()
     {
         printf(
@@ -349,164 +378,112 @@ class StaffDirectoryPlugin_SettingsPage
 		}
 	}
 	
-	function output_mailing_list_form()
-	{
-?>
-		<!-- Begin MailChimp Signup Form -->
-		<style type="text/css">
-			/* MailChimp Form Embed Code - Slim - 08/17/2011 */
-			#mc_embed_signup form {display:block; position:relative; text-align:left; padding:10px 0 10px 3%}
-			#mc_embed_signup h2 {font-weight:bold; padding:0; margin:15px 0; font-size:1.4em;}
-			#mc_embed_signup input {border:1px solid #999; -webkit-appearance:none;}
-			#mc_embed_signup input[type=checkbox]{-webkit-appearance:checkbox;}
-			#mc_embed_signup input[type=radio]{-webkit-appearance:radio;}
-			#mc_embed_signup input:focus {border-color:#333;}
-			#mc_embed_signup .button {clear:both; background-color: #aaa; border: 0 none; border-radius:4px; color: #FFFFFF; cursor: pointer; display: inline-block; font-size:15px; font-weight: bold; height: 32px; line-height: 32px; margin: 0 5px 10px 0; padding:0; text-align: center; text-decoration: none; vertical-align: top; white-space: nowrap; width: auto;}
-			#mc_embed_signup .button:hover {background-color:#777;}
-			#mc_embed_signup .small-meta {font-size: 11px;}
-			#mc_embed_signup .nowrap {white-space:nowrap;}     
-			#mc_embed_signup .clear {clear:none; display:inline;}
-
-			#mc_embed_signup h3 { color: #008000; display:block; font-size:19px; padding-bottom:10px; font-weight:bold; margin: 0 0 10px;}
-			#mc_embed_signup .explain {
-				color: #808080;
-				width: 600px;
+	function settings_page_top(){
+		$title = "Staff Directory Settings";
+		$message = "Staff Directory Settings Updated.";
+		
+		global $pagenow;
+		global $current_user;
+		get_currentuserinfo();
+		?>
+		<script type="text/javascript">
+		jQuery(function () {
+			if (typeof(gold_plugins_init_coupon_box) == 'function') {
+				gold_plugins_init_coupon_box();
 			}
-			#mc_embed_signup label {
-				color: #000000;
+		});
+		</script>
+		<?php if ($this->root->is_pro()):?>
+		<div class="wrap staff_directory_admin_wrap">
+		<?php else: ?>
+		<div class="wrap staff_directory_admin_wrap not-pro">
+		<?php endif; ?>
+		<h2><?php echo $title; ?></h2>
+		<style type="text/css">			
+			fieldset {
+				border: 1px solid #ccc !important;
 				display: block;
-				font-size: 15px;
+				margin: 20px 0 !important;
+				padding: 0 20px !important;
+			}
+			
+			fieldset legend{
+				font-size: 18px;
 				font-weight: bold;
-				padding-bottom: 10px;
-			}
-			#mc_embed_signup input.email {display:block; padding:8px 0; margin:0 4% 10px 0; text-indent:5px; width:58%; min-width:130px;}
-
-			#mc_embed_signup div#mce-responses {float:left; top:-1.4em; padding:0em .5em 0em .5em; overflow:hidden; width:90%;margin: 0 5%; clear: both;}
-			#mc_embed_signup div.response {margin:1em 0; padding:1em .5em .5em 0; font-weight:bold; float:left; top:-1.5em; z-index:1; width:80%;}
-			#mc_embed_signup #mce-error-response {display:none;}
-			#mc_embed_signup #mce-success-response {color:#529214; display:none;}
-			#mc_embed_signup label.error {display:block; float:none; width:auto; margin-left:1.05em; text-align:left; padding:.5em 0;}		
-			#mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
-				#mc_embed_signup{    
-						background-color: white;
-						border: 1px solid #DCDCDC;
-						clear: left;
-						color: #008000;
-						font: 14px Helvetica,Arial,sans-serif;
-						margin-top: 10px;
-						margin-bottom: 0px;
-						max-width: 800px;
-						padding: 5px 12px 0px;
-			}
-			#mc_embed_signup form{padding: 10px}
-
-			#mc_embed_signup .special-offer {
-				color: #808080;
-				margin: 0;
-				padding: 0 0 3px;
-				text-transform: uppercase;
-			}
-			#mc_embed_signup .button {
-			  background: #5dd934;
-			  background-image: -webkit-linear-gradient(top, #5dd934, #549e18);
-			  background-image: -moz-linear-gradient(top, #5dd934, #549e18);
-			  background-image: -ms-linear-gradient(top, #5dd934, #549e18);
-			  background-image: -o-linear-gradient(top, #5dd934, #549e18);
-			  background-image: linear-gradient(to bottom, #5dd934, #549e18);
-			  -webkit-border-radius: 5;
-			  -moz-border-radius: 5;
-			  border-radius: 5px;
-			  font-family: Arial;
-			  color: #ffffff;
-			  font-size: 20px;
-			  padding: 10px 20px 10px 20px;
-			  line-height: 1.5;
-			  height: auto;
-			  margin-top: 7px;
-			  text-decoration: none;
-			}
-
-			#mc_embed_signup .button:hover {
-			  background: #65e831;
-			  background-image: -webkit-linear-gradient(top, #65e831, #5dd934);
-			  background-image: -moz-linear-gradient(top, #65e831, #5dd934);
-			  background-image: -ms-linear-gradient(top, #65e831, #5dd934);
-			  background-image: -o-linear-gradient(top, #65e831, #5dd934);
-			  background-image: linear-gradient(to bottom, #65e831, #5dd934);
-			  text-decoration: none;
-			}
-			#signup_wrapper {
-				max-width: 800px;
-				margin-bottom: 20px;
-				margin-top: 30px;
-			}
-			#signup_wrapper .u_to_p
-			{
-				font-size: 10px;
-				margin: 0;
-				padding: 2px 0 0 3px;				
 			}
 		</style>
-		<div id="signup_wrapper">
-			<div id="mc_embed_signup">
-				<form action="http://illuminatikarate.us2.list-manage2.com/subscribe/post?u=403e206455845b3b4bd0c08dc&amp;id=934e059cff" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-					<p class="special-offer">Special Offer:</p>
-					<h3>Sign-up for our newsletter now, and we'll give you a discount on Staff Directory Pro!</h3>
-					<label for="mce-EMAIL">Your Email:</label>
-					<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
-					<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-					<div style="position: absolute; left: -5000px;"><input type="text" name="b_403e206455845b3b4bd0c08dc_934e059cff" tabindex="-1" value=""></div>
-					<div class="clear"><input type="submit" value="Subscribe Now" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-					<p class="explain"><strong>What To Expect:</strong> You'll receive you around one email from us each month, jam-packed with special offers and tips for getting the most out of WordPress. Of course, you can unsubscribe at any time.</p>
-				</form>
-			</div>
-			<p class="u_to_p"><a href="http://goldplugins.com/our-plugins/before-and-after/?utm_source=plugin&utm_campaign=upgrade_small">Upgrade to Staff Directory Pro now</a> to remove banners like this one.</p>
-		</div>
-		<!--End mc_embed_signup-->
-<?php	
+		<?php if (!	$this->root->is_pro()):?>
+				<div id="signup_wrapper">
+					<?php $this->output_sidebar_coupon_form(); ?>
+					<p class="u_to_p"><a href="http://goldplugins.com/our-plugins/company-directory/upgrade-to-company-directory-pro/?utm_source=themes">Upgrade to Staff Directory Pro now</a> to remove banners like this one.</p>				
+				</div>
+				
+		<?php endif; ?>
+		
+		<?php if (isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true') : ?>
+		<div id="message" class="updated fade"><p><?php echo $message; ?></p></div>
+		<?php endif;
 	}
 	
-	function output_admin_styles()
+	function output_sidebar_coupon_form()
 	{
+		global $current_user;
 		?>
-		<style>
-			.register_plugin {
-				border: 1px solid green;
-				background-color: lightyellow;
-				padding: 25px;
-				width: 750px;
-				margin-top: 10px;
-			}
-			.register_plugin.is_registered {
-				background-color: #EEFFF7;
-				padding: 10px 16px 0;
-			}
-			.register_plugin h3 {
-				padding-top: 0;
-				margin-top: 0;
-			}
-			.register_plugin .field {
-				padding-bottom: 10px;
-			}
-			.register_plugin .submit {
-				padding-top: 10px;
-				margin: 0;
-			}
-			.register_plugin label {
-				display: block;
-			}
-			.register_plugin input[type="text"] {
-				width: 350px;
-			}
-			/* Add/Edit page */
-			.sd_options input[type="radio"] {
-				float: left;
-				margin: 3px 5px 0 0;
-			}
-			.sd_options .secondary-option {
-				padding: 10px 0 10px 20px;
-			}			
-		</style>
-		<?php
+		<div class="topper">
+			<h3>Save 20% on Staff Directory Pro!</h3>
+			<p class="pitch">Sign-up for our newsletter, and we’ll send you a coupon for 20% off your upgrade to Staff Directory Pro!</p>
+		</div>
+		<div id="mc_embed_signup">
+			<form action="http://goldplugins.com/atm/atm.php?u=403e206455845b3b4bd0c08dc&amp;id=a70177def0&amp;plug=sdpro" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+				<div class="fields_wrapper">
+					<label for="mce-NAME">Your Name:</label>
+					<input type="text" value="<?php echo (!empty($current_user->display_name) ?  $current_user->display_name : ''); ?>" name="NAME" class="name" id="mce-NAME" placeholder="Your Name">
+					<label for="mce-EMAIL">Your Email:</label>
+					<input type="email" value="<?php echo (!empty($current_user->user_email) ?  $current_user->user_email : ''); ?>" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+					<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+					<div style="position: absolute; left: -5000px;"><input type="text" name="b_403e206455845b3b4bd0c08dc_6ad78db648" tabindex="-1" value=""></div>
+				</div>
+				<div class="clear"><input type="submit" value="Send Me The Coupon Now" name="subscribe" id="mc-embedded-subscribe" class="smallBlueButton"></div>
+				<p class="secure"><img src="<?php echo plugins_url( '../assets/img/lock.png', __FILE__ ); ?>" alt="Lock" width="16px" height="16px" />We respect your privacy.</p>
+				
+				<input type="hidden" id="mc-upgrade-plugin-name" value="Staff Directory Pro" />
+				<input type="hidden" id="mc-upgrade-link-per" value="http://goldplugins.com/purchase/staff-directory-pro/single?promo=newsub20" />
+				<input type="hidden" id="mc-upgrade-link-biz" value="http://goldplugins.com/purchase/staff-directory-pro/business?promo=newsub20" />
+				<input type="hidden" id="mc-upgrade-link-dev" value="http://goldplugins.com/purchase/staff-directory-pro/developer?promo=newsub20" />
+
+				<div class="features">
+					<strong>When you upgrade, you'll instantly unlock:</strong>
+					<ul>
+						<li>Table Style Layout</li>
+						<li>Grid Style Layout</li>
+						<li>Outstanding support from our developers</li>
+						<li>Remove all banners from the admin area</li>
+						<li>And more! We add new features regularly.</li>
+					</ul>
+				</div>
+				<input type="hidden" id="gold_plugins_already_subscribed" name="gold_plugins_already_subscribed" value="<?php echo get_user_setting ('asdf', '0'); ?>" />
+			</form>
+		</div>			
+		<?php			
+	}
+
+	function admin_init()
+	{
+		wp_register_style( 'staff_directory_admin_stylesheet', plugins_url('../assets/css/admin_style.css', __FILE__) );
+		wp_enqueue_style( 'staff_directory_admin_stylesheet' );		
+		wp_enqueue_script(
+			'company-directory-admin',
+			plugins_url('../assets/js/staff-directory-admin.js', __FILE__),
+			array( 'jquery' ),
+			false,
+			true
+		); 
+		wp_enqueue_script(
+			'gp-admin_v2',
+			plugins_url('../assets/js/gp-admin_v2.js', __FILE__),
+			array( 'jquery' ),
+			false,
+			true
+		);	
 	}
 }
