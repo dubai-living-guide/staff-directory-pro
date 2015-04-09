@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.2
+Stable tag: 1.2.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -12,9 +12,9 @@ Company Directory is a simple-to-use plugin for adding Staff or Faculty Members 
 
 == Description ==
 
-The Company Directory is an easy way to add your Staff to your website.  Staff are presented in several easy to understand layouts, including a list, a grid, and single views, allowing visitors to get to know your company and capabilities.
+The Company Directory is an easy way to add your Staff to your website.  Staff are presented in several easy to understand layouts, including a list and single views, allowing visitors to get to know your company and capabilities.
 
-The Pro Version of the Company Directory includes advanced features such as a Skills Matrix with Contact Form!
+The Pro Version of the Company Directory includes advanced features such as a Table View and Grid View, as well as direct support!
 
 == Installation ==
 
@@ -90,6 +90,9 @@ Our plugin supports creating your own templates, and it includes one by default 
 
 == Changelog ==
 
+= 1.2.1 =
+* Minor Fixes
+
 = 1.2 =
 * Updates Readme and Documentation to better explain plugin use.
 * Adds Taxonomies to Staff Members.
@@ -107,4 +110,4 @@ Initial Release!!
 
 == Upgrade Notice ==
 
-* 1.2: Staff Member Taxonomies, UI updates, Documentation, and more!
+* 1.2.1: Staff Member Taxonomies, UI updates, Documentation, and more!
