@@ -8,7 +8,7 @@ Stable tag: 1.2.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Company Directory is a simple-to-use plugin for adding Staff or Faculty Members with a Directory to your WordPress Theme, using a shortcode or a widget.
+Company Directory is a simple-to-use plugin for adding Staff or Faculty Members with a Directory to your WordPress Theme.
 
 == Description ==
 
