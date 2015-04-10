@@ -247,7 +247,7 @@ class StaffDirectoryPlugin_SettingsPage
 				<?php else: ?>
 					<div class="register_plugin is_registered">
 						<h3>Pro Registration</h3>
-						<p class="plugin_is_registered">✓ Staff Directory Pro is registered and activated. Thank you!</p>
+						<p class="plugin_is_registered">✓ Company Directory Pro is registered and activated. Thank you!</p>
 						<?php $this->output_hidden_registration_fields(); ?>
 					</div>
 				<?php endif; ?>
@@ -379,8 +379,8 @@ class StaffDirectoryPlugin_SettingsPage
 	}
 	
 	function settings_page_top(){
-		$title = "Staff Directory Settings";
-		$message = "Staff Directory Settings Updated.";
+		$title = "Company Directory Settings";
+		$message = "Company Directory Settings Updated.";
 		
 		global $pagenow;
 		global $current_user;
@@ -415,7 +415,7 @@ class StaffDirectoryPlugin_SettingsPage
 		<?php if (!	$this->root->is_pro()):?>
 				<div id="signup_wrapper">
 					<?php $this->output_sidebar_coupon_form(); ?>
-					<p class="u_to_p"><a href="http://goldplugins.com/our-plugins/company-directory/upgrade-to-company-directory-pro/?utm_source=themes">Upgrade to Staff Directory Pro now</a> to remove banners like this one.</p>				
+					<p class="u_to_p"><a href="http://goldplugins.com/our-plugins/company-directory/upgrade-to-company-directory-pro/?utm_source=themes">Upgrade to Company Directory Pro now</a> to remove banners like this one.</p>				
 				</div>
 				
 		<?php endif; ?>
@@ -430,8 +430,8 @@ class StaffDirectoryPlugin_SettingsPage
 		global $current_user;
 		?>
 		<div class="topper">
-			<h3>Save 20% on Staff Directory Pro!</h3>
-			<p class="pitch">Sign-up for our newsletter, and we’ll send you a coupon for 20% off your upgrade to Staff Directory Pro!</p>
+			<h3>Save 20% on Company Directory Pro!</h3>
+			<p class="pitch">Sign-up for our newsletter, and we’ll send you a coupon for 20% off your upgrade to Company Directory Pro!</p>
 		</div>
 		<div id="mc_embed_signup">
 			<form action="http://goldplugins.com/atm/atm.php?u=403e206455845b3b4bd0c08dc&amp;id=a70177def0&amp;plug=sdpro" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
@@ -446,10 +446,11 @@ class StaffDirectoryPlugin_SettingsPage
 				<div class="clear"><input type="submit" value="Send Me The Coupon Now" name="subscribe" id="mc-embedded-subscribe" class="smallBlueButton"></div>
 				<p class="secure"><img src="<?php echo plugins_url( '../assets/img/lock.png', __FILE__ ); ?>" alt="Lock" width="16px" height="16px" />We respect your privacy.</p>
 				
-				<input type="hidden" id="mc-upgrade-plugin-name" value="Staff Directory Pro" />
-				<input type="hidden" id="mc-upgrade-link-per" value="http://goldplugins.com/purchase/staff-directory-pro/single?promo=newsub20" />
-				<input type="hidden" id="mc-upgrade-link-biz" value="http://goldplugins.com/purchase/staff-directory-pro/business?promo=newsub20" />
-				<input type="hidden" id="mc-upgrade-link-dev" value="http://goldplugins.com/purchase/staff-directory-pro/developer?promo=newsub20" />
+				<input type="hidden" name="PRODUCT" value="Company Directory Pro" />
+				<input type="hidden" id="mc-upgrade-plugin-name" value="Company Directory Pro"" />
+				<input type="hidden" id="mc-upgrade-link-per" value="http://goldplugins.com/purchase/company-directory-pro/single?promo=newsub20" />
+				<input type="hidden" id="mc-upgrade-link-biz" value="http://goldplugins.com/purchase/company-directory-pro/business?promo=newsub20" />
+				<input type="hidden" id="mc-upgrade-link-dev" value="http://goldplugins.com/purchase/company-directory-pro/developer?promo=newsub20" />
 
 				<div class="features">
 					<strong>When you upgrade, you'll instantly unlock:</strong>
@@ -461,7 +462,7 @@ class StaffDirectoryPlugin_SettingsPage
 						<li>And more! We add new features regularly.</li>
 					</ul>
 				</div>
-				<input type="hidden" id="gold_plugins_already_subscribed" name="gold_plugins_already_subscribed" value="<?php echo get_user_setting ('asdf', '0'); ?>" />
+				<input type="hidden" id="gold_plugins_already_subscribed" name="gold_plugins_already_subscribed" value="<?php echo get_user_setting ('_gp_ml_has_subscribed‏', '0'); ?>" />
 			</form>
 		</div>			
 		<?php			

@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -20,7 +20,7 @@ The Pro Version of the Company Directory includes advanced features such as a Ta
 
 This section describes how to install the plugin and get it working.
 
-1. Upload the contents of `/staff-directory-pro/` to the `/wp-content/plugins/` directory
+1. Upload the contents of `/staff-directory/` to the `/wp-content/plugins/` directory
 2. Activate Staff Directory through the 'Plugins' menu in WordPress
 3. Visit this address for information on how to configure the plugin: http://goldplugins.com/documentation/company-directory-documentation/
 
@@ -90,6 +90,9 @@ Our plugin supports creating your own templates, and it includes one by default 
 
 == Changelog ==
 
+= 1.2.2 =
+* Minor UI and Bug Fixes
+
 = 1.2.1 =
 * Minor Fixes
 
@@ -110,4 +113,4 @@ Initial Release!!
 
 == Upgrade Notice ==
 
-* 1.2.1: Staff Member Taxonomies, UI updates, Documentation, and more!
+* 1.2.2: Minor UI and bug fixes
