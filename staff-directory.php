@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.2.2
+Version: 1.3
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -40,7 +40,8 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		add_shortcode('staff_list', array($this, 'staff_list_shortcode'));
 		add_shortcode('staff_member', array($this, 'staff_member_shortcode'));
 		add_action('init', array($this, 'remove_features_from_custom_post_type'));
-		add_filter( 'template_include', array($this, 'override_template_location'), 1 );
+		/* Enable custom templates (currently only available for single staff members) */
+		add_filter('the_content', array($this, 'single_staff_content_filter'));
 		// add our custom meta boxes
 		add_action( 'admin_menu', array($this, 'add_meta_boxes'));
 		//flush rewrite rules - only do this once!
@@ -68,14 +69,12 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		
 		//none set, add them just to our type
 		if( $supportedTypes === false ){
-			add_theme_support( 'post-thumbnails', array( 'staff-member' ) );       
-			//for the banner images    
+			add_theme_support( 'post-thumbnails', array( 'staff-member' ) );        
 		}
 		//specifics set, add our to the array
 		elseif( is_array( $supportedTypes ) ){
 			$supportedTypes[0][] = 'staff-member';
 			add_theme_support( 'post-thumbnails', $supportedTypes[0] );
-			//for the banner images
 		}
 	}
 	
@@ -104,29 +103,18 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	function add_stylesheets_and_scripts()
 	{
 		$cssUrl = plugins_url( 'assets/css/staff-directory.css' , __FILE__ );
-		$this->add_stylesheet('staff-directory-css',  $cssUrl);
-		
-/* 		$jsUrl = plugins_url( 'assets/js/wp-banners.js' , __FILE__ );
-		$this->add_script('wp-banners-js',  $jsUrl);
- */		
-		
-	}	
-
-	function override_template_location( $template_path ) {
-		if ( get_post_type() == 'staff-member' )
-		{
-			if ( is_single() )
-			{
-				// checks if the file exists in the theme first,
-				// otherwise serve the file from the plugin
-				if ( $theme_file = locate_template( array ( 'single-staff-member.php' ) ) ) {
-					$template_path = $theme_file;
-				} else {
-					$template_path = plugin_dir_path( __FILE__ ) . 'templates/single-staff-member.php';
-				}
-			}
+		$this->add_stylesheet('staff-directory-css',  $cssUrl);		
+	}		
+	
+	function single_staff_content_filter($content)
+	{
+		if ( is_single() && get_post_type() == 'staff-member' ) {
+			global $staff_data;
+			$staff_data = $this->get_staff_data_for_post();
+			$template_content = $this->get_template_content('single-staff-member.php');
+			return $template_content;
 		}
-		return $template_path;
+		return $content;
 	}
 
 	/* Shortcodes */
@@ -200,36 +188,20 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		} else {		
 			$atts['columns'] = array_map('trim', explode(',', $atts['columns']));
 			
-			// get a Custom Loop for the staff custom post type, and pass it to the template
-			$staff_loop = $this->get_staff_members_loop($atts['count'],$atts['category'],$atts['id']);
+			//load up the staff data for this ID
+			global $staff_data;
+			$staff_data = $this->get_staff_data_for_this_post($atts['id']);
 			
-			// $vars will be available in the template
-			$vars = array('staff_loop' => $staff_loop);
-
-			//single staff members use the single-staff-member-shortcode template, not the single-staff-member template
-			//if you use single-staff-member template, you will get nested loops
-			$templatePath = plugin_dir_path( __FILE__ ) . 'templates/single-staff-member-shortcode.php';
+			//build html using loaded data
+			$template_content = $this->get_template_content('single-staff-member.php');
 			
-			$html = $this->render_template($templatePath, $vars);
+			$html = $template_content;
 		}
 		
 		return $html;
-	}
+	}		
 	
-	private function build_staff_member_html($staff_member)
-	{
-		$bio_link = get_permalink($staff_member->ID);
-		$html = '';
-		return $html;
-	}
-	
-	function output_settings_page()
-	{
-		echo '<h3>Company Directory Settings</h3>';	
-	}
-	
-	
-	// returns a list of all locations in the database, sorted by the title, ascending
+	// returns a list of all staff members in the database, sorted by the title, ascending
 	private function get_all_staff_members()
 	{
 		$conditions = array('post_type' => 'staff-member',
@@ -241,8 +213,76 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		$all = get_posts($conditions);	
 		return $all;
 	}
+	
+	function normalize_truthy_value($input)
+	{
+		$input = strtolower($input);
+		$truthy_values = array('yes', 'y', '1', 1, 'true', true);
+		return in_array($input, $truthy_values);
+	}
+	
+	function get_template_content($template_name, $default_content = '')
+	{	
+		$template_path = $this->get_template_path($template_name);
+		if (file_exists($template_path)) {
+			// load template by including it in an output buffer, so that variables and PHP will be run
+			ob_start();
+			include($template_path);
+			$content = ob_get_contents();
+			ob_end_clean();
+			return $content;
+		}
+		// couldn't find a matching template file, so return the default content instead
+		return $default_content;
+	}
+	
+	function get_template_path($template_name)
+	{
+		// checks if the file exists in the theme first,
+		// otherwise serve the file from the plugin
+		if ( $theme_file = locate_template( array ( $template_name ) ) ) {
+			$template_path = $theme_file;
+		} else {
+			$template_path = plugin_dir_path( __FILE__ ) . 'templates/' . $template_name;
+		}
+		return $template_path;
+	}
+	
+	/* Loads the meta data for a given staff member (name, phone, email, title, etc) and returns it as an array */
+	function get_staff_metadata($post_id)
+	{
+		$ret = array();
+		$staff = get_post($post_id);
+		$ret['ID'] = $staff->ID;
+		$ret['full_name'] = $staff->post_title;
+		$ret['content'] = $staff->post_content;
+		$ret['phone'] = $this->get_option_value($staff->ID, 'phone','');
+		$ret['email'] = $this->get_option_value($staff->ID, 'email','');
+		$ret['title'] = $this->get_option_value($staff->ID, 'title','');
+		$ret['first_name'] = $this->get_option_value($staff->ID, 'first_name','');
+		$ret['last_name'] = $this->get_option_value($staff->ID, 'last_name','');
+		
+		return $ret;
+	}
+	
+	//loads staff data for a specific post, when already inside a loop (such as viewing a single staff member)
+	function get_staff_data_for_post()
+	{
+		global $post;
+		$staff_data = $this->get_staff_metadata($post->ID);
+		//do anything to the data needed here, before returning to template
+		return $staff_data;
+	}
+	
+	//loads staff data for a specific post, when passed an ID for that post
+	function get_staff_data_for_this_post($id = false)
+	{
+		$staff_data = $this->get_staff_metadata($id);
+		//do anything to the data needed here, before returning to template
+		return $staff_data;
+	}
 
-	// returns a list of all locations in the database, sorted by the title, ascending
+	// returns a list of all staff members in the database, sorted by the title, ascending
 	// TBD: provide options to control how staff members are ordered
 	private function get_staff_members_loop($count = -1, $taxonomy = false, $id = false)
 	{
@@ -254,12 +294,14 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 								'orderby' => 'meta_value',
 								'meta_key' => '_ikcf_last_name',
 								'order' => 'ASC',
+								'nopaging' => true
 			);
 		//no taxonomy passed
 		//id passed
 		} elseif(!$taxonomy){			
 			$conditions = array('post_type' => 'staff-member',
-								'p' => $id
+								'p' => $id,								
+								'nopaging' => true
 			);
 		//no id passed
 		//category passed
@@ -269,6 +311,7 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 								'orderby' => 'meta_value',
 								'meta_key' => '_ikcf_last_name',
 								'order' => 'ASC',
+								'nopaging' => true,
 								'tax_query' => array(
 									array(
 										'taxonomy' => 'staff-member-category',
@@ -314,14 +357,12 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		
 	}
 	
-	function is_pro() 
-	{
+	function is_pro(){
 		return $this->proUser;
 	}
 
 	//only do this once
-	function rewrite_flush() {
-		
+	function rewrite_flush() {		
 		flush_rewrite_rules();
 	}
 	

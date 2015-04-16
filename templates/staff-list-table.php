@@ -29,7 +29,7 @@
 							case 'name':
 								// return the post title
 								$val = get_the_title();
-								$val = htmlentities($val);
+								//$val = htmlentities($val);
 								$val = '<a href="' . get_the_permalink() . '">' . $val . '</a>';
 							break;
 
