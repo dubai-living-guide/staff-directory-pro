@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.3
+Stable tag: 1.3.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -90,6 +90,9 @@ Our plugin supports creating your own templates, and it includes one by default 
 
 == Changelog ==
 
+= 1.3.1 =
+* Updates Single Staff Member Template to render instead of display HTML
+
 = 1.3 =
 * Updates Single Staff Member Template to function better within your Theme.
 * Fix double-encoding issue with Title field.
@@ -117,4 +120,4 @@ Initial Release!!
 
 == Upgrade Notice ==
 
-* 1.3: Updates Single Staff Member Template; minor fixes.
+* 1.3.1: Updates Single Staff Member Template to render instead of display HTML

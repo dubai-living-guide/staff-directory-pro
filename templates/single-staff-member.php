@@ -14,7 +14,7 @@
 	<div class="staff-member-right">
 		<h3 class="staff-member-name"><?php echo $staff_data['full_name']; ?></h3>
 		<?php if ($my_title): ?><p class="staff-member-title"><?php echo $my_title ?></p><?php endif; ?>
-		<div class="staff-member-bio"><?php echo wpautop(htmlentities($staff_data['content'])); ?></div>
+		<div class="staff-member-bio"><?php echo wpautop($staff_data['content']); ?></div>
 		<?php if ($my_phone || $my_email): ?>			
 		<div class="staff-member-contacts">
 			<h4>Contact</h4>

@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.3
+Version: 1.3.1
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
