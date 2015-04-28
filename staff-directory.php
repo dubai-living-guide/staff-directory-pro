@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.3.1
+Version: 1.3.2
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -330,13 +330,13 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	function verify_registration_key()
 	{
         $this->options = get_option( 'sd_options' );
-		if (isset($options['api_key']) && 
-			isset($options['registration_email'])) {
-		
+		if (isset($this->options['api_key']) && 
+			isset($this->options['registration_email'])) {
+				
 				// check the key
 				$keychecker = new S_D_KeyChecker();
-				$correct_key = $keychecker->computeKeyEJ($options['registration_email']);
-				if (strcmp($options['api_key'], $correct_key) == 0) {
+				$correct_key = $keychecker->computeKeyEJ($this->options['registration_email']);
+				if (strcmp($this->options['api_key'], $correct_key) == 0) {
 					$this->proUser = true;
 				} else {
 					$this->proUser = false;

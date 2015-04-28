@@ -3,8 +3,8 @@ Contributors: richardgabriel, ghuger
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=V7HR8DP4EJSYN
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
-Tested up to: 4.1.1
-Stable tag: 1.3.1
+Tested up to: 4.2.1
+Stable tag: 1.3.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -12,9 +12,21 @@ Company Directory is a simple-to-use plugin for adding Staff or Faculty Members 
 
 == Description ==
 
-The Company Directory is an easy way to add your Staff to your website.  Staff are presented in several easy to understand layouts, including a list and single views, allowing visitors to get to know your company and capabilities.
+The Company Directory is an easy way to add your Staff to your website.  Staff and Faculty are presented in several easy to understand layouts, including a list and single views, allowing visitors to get to know your company and capabilities.  Click through from your List, Grid, and Table views to a Single View.  Company Directory allows you to include a Job Title, Email Address, Phone Number, Photo, and Bio with each Staff or Faculty Member.
+
+= Premium Support =
+
+The GoldPlugins team does not provide direct support for the Company Directory plugin on the WordPress.org forums. One on one email support is available to people who have purchased Company Directory Pro only. Company Directory Pro also includes extra features, so you should [upgrade today!](http://goldplugins.com/our-plugins/company-directory-pro/upgrade-to-company-directory-pro/ "Upgrade to Company Directory Pro")
 
 The Pro Version of the Company Directory includes advanced features such as a Table View and Grid View, as well as direct support!
+
+= Display Your Staff and Faculty in an Easy to View Format =
+
+Managing and displaying a large amount of Faculty or Staff on your website can be difficult - especially when using traditional methods such as editing HTML on a page.  With Company Directory, users are given an easy-to-understand method of adding and managing Staff and Faculty on their website.
+
+Using our simple shortcode system, website maintainers can insert a list, table, or grid of Staff or Faculty onto any WordPress Page!  This allows visitors to view your Staff or Faculty, find who they are looking for, and contact them directly!
+
+Our professional development team is continually improving and updating our plugin, so stay tuned for updates!
 
 == Installation ==
 
@@ -90,6 +102,9 @@ Our plugin supports creating your own templates, and it includes one by default 
 
 == Changelog ==
 
+= 1.3.2 =
+* Compatibility update; registration key fix.
+
 = 1.3.1 =
 * Updates Single Staff Member Template to render instead of display HTML
 
@@ -120,4 +135,4 @@ Initial Release!!
 
 == Upgrade Notice ==
 
-* 1.3.1: Updates Single Staff Member Template to render instead of display HTML
+* 1.3.2: Compatibility update; registration key fix.
