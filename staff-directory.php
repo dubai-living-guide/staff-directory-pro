@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.3.2
+Version: 1.3.3
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -46,6 +46,11 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		add_action( 'admin_menu', array($this, 'add_meta_boxes'));
 		//flush rewrite rules - only do this once!
 		register_activation_hook( __FILE__, array($this, 'rewrite_flush' ) );
+		
+		$plugin = plugin_basename(__FILE__);
+		add_filter( "plugin_action_links_{$plugin}", array($this, 'add_settings_link_to_plugin_action_links') );
+		add_filter( 'plugin_row_meta', array($this, 'add_custom_links_to_plugin_description'), 10, 2 );	
+		
 		parent::add_hooks();
 	}
 	
@@ -416,6 +421,34 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 			echo '<style type="text/css" media="screen">' . $this->options['custom_css'] . "</style>";
 			$easy_t_footer_css_output = true;
 		}
-	}	
+	}
+	
+	//add an inline link to the settings page, before the "deactivate" link
+	function add_settings_link_to_plugin_action_links($links) { 
+	  $settings_link = '<a href="admin.php?page=staff_dir-settings">Settings</a>';
+	  array_unshift($links, $settings_link); 
+	  return $links; 
+	}
+
+	// add inline links to our plugin's description area on the Plugins page
+	function add_custom_links_to_plugin_description($links, $file) {
+
+		/** Get the plugin file name for reference */
+		$plugin_file = plugin_basename( __FILE__ );
+	 
+		/** Check if $plugin_file matches the passed $file name */
+		if ( $file == $plugin_file )
+		{
+			$new_links['settings_link'] = '<a href="admin.php?page=staff_dir-settings">Settings</a>';
+			$new_links['support_link'] = '<a href="https://goldplugins.com/contact/?utm-source=plugin_menu&utm_campaign=support&utm_banner=company-directory-plugin-menu" target="_blank">Get Support</a>';
+				
+			if(!$this->is_pro()){
+				$new_links['upgrade_to_pro'] = '<a href="https://goldplugins.com/our-plugins/company-directory-pro/upgrade-to-company-directory-pro/?utm_source=plugin_menu&utm_campaign=upgrade" target="_blank">Upgrade to Pro</a>';
+			}
+			
+			$links = array_merge( $links, $new_links);
+		}
+		return $links; 
+	}
 }
 $gp_sdp = new StaffDirectoryPlugin();
