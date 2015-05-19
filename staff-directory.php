@@ -4,13 +4,15 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.3.3
+Version: 1.4
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
 require_once('gold-framework/plugin-base.php');
 require_once('gold-framework/staff-directory-plugin.settings.page.class.php');
 require_once('include/sd_kg.php');
+require_once('include/lib/csv_importer.php');
+require_once('include/lib/csv_exporter.php');
 
 class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 {
@@ -50,6 +52,9 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		$plugin = plugin_basename(__FILE__);
 		add_filter( "plugin_action_links_{$plugin}", array($this, 'add_settings_link_to_plugin_action_links') );
 		add_filter( 'plugin_row_meta', array($this, 'add_custom_links_to_plugin_description'), 10, 2 );	
+				
+		// catch CSV import/export trigger
+		add_action('admin_init', array($this, 'process_import_export'));
 		
 		parent::add_hooks();
 	}
@@ -450,5 +455,41 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		}
 		return $links; 
 	}
+	
+	/* Import / Export */
+		
+	/* Looks for a special POST value, and if its found, outputs a CSV of all Staff Members */
+	function process_import_export()
+	{
+		// look for an Export command
+		if ( isset($_POST['_company_dir_do_export']) && $_POST['_company_dir_do_export'] == '_company_dir_do_export' ) {
+			$exporter = new StaffDirectoryPlugin_Exporter();
+			$exporter->process_export();
+			exit();
+		}
+		// look for an Import command
+		else if (isset($_POST['_company_dir_do_import']) && $_POST['_company_dir_do_import'] == '_company_dir_do_import' && !empty($_FILES) ) {
+			$importer = new StaffDirectoryPlugin_Importer($this);
+			$this->import_result = $importer->process_import();
+			if ( $this->import_result !== false ) {
+				add_action( 'admin_notices', array( $this, 'display_import_notice' ) );
+			}
+			
+			///var_dump($res);
+			//exit();
+		}
+	}
+	
+	public function display_import_notice() {
+		if ( $this->import_result['failed'] > 0 ) {
+			$msg = sprintf("Successfully imported %d entries. %s entries rejected as duplicate.", $this->import_result['imported'], $this->import_result['failed']);
+			printf ("<div class='updated'><p>%s</p></div>", $msg);
+		}
+		else {
+			$msg = sprintf("Successfully imported %d entries.", $this->import_result['imported']);
+			printf ("<div class='updated'><p>%s</p></div>", $msg);
+		}
+	}
+	
 }
 $gp_sdp = new StaffDirectoryPlugin();

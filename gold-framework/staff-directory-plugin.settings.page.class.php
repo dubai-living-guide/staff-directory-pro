@@ -80,6 +80,14 @@ class StaffDirectoryPlugin_SettingsPage
             array( $this, 'custom_css_callback' ), // Callback
             'sd_general_settings', // Page
             'general' // Section           
+        );
+
+		add_settings_field(
+            'sd_templates_detected', // ID
+            'Custom Templates', // Title 
+            array( $this, 'custom_templates_callback' ), // Callback
+            'sd_general_settings', // Page
+            'general' // Section           
         );  
 
         add_settings_field(
@@ -256,16 +264,51 @@ class StaffDirectoryPlugin_SettingsPage
 					if(count($this->registered_sections) > 0){
 						foreach ($this->registered_sections as $registered_section) {
 							do_settings_sections( $registered_section );
-						}
-					
+						}						
 						// output the "Save Settings" button at the end
 						submit_button();
 					}
 				?>
             </form>
+			<?php $this->output_import_export_settings(); ?>
+
         </div>		
         <?php
     }
+	
+	function output_import_export_settings()
+	{
+		?><h3>Import / Export Staff Members from CSV</h3>
+		<?php if($this->root->is_pro()): ?>	
+		<form method="POST" action="" enctype="multipart/form-data">					
+			<fieldset>
+				<legend>Import Staff Members</legend>
+				<?php 
+					//CSV Importer
+					StaffDirectoryPlugin_Importer::output_form();
+				?>
+			</fieldset>
+			<fieldset>
+				<legend>Export Staff Members</legend>
+				<?php 
+					//CSV Exporter
+					StaffDirectoryPlugin_Exporter::output_form();
+				?>
+			</fieldset>
+		</form>
+		<?php else: ?>
+		<form method="POST" action="" enctype="multipart/form-data">					
+			<fieldset>
+				<legend>Import Staff Members</legend>
+				<p class="easy_testimonials_not_registered"><strong>This feature requires Company Directory Pro.</strong>&nbsp;&nbsp;&nbsp;<a class="button" target="blank" href="https://goldplugins.com/our-plugins/company-directory-pro/upgrade-to-company-directory-pro/?utm_campaign=upgrade&utm_source=plugin&utm_banner=import_upgrade">Upgrade Now</a></p>
+			</fieldset>
+			<fieldset>
+				<legend>Export Staff Members</legend>
+				<p class="easy_testimonials_not_registered"><strong>This feature requires Company Directory Pro.</strong>&nbsp;&nbsp;&nbsp;<a class="button" target="blank" href="https://goldplugins.com/our-plugins/company-directory-pro/upgrade-to-company-directory-pro/?utm_campaign=upgrade&utm_source=plugin&utm_banner=export_upgrade">Upgrade Now</a></p>	
+			</fieldset>
+		</form>
+		<?php endif;
+	}
 
 	//help page / documentation
 	function help_settings_page(){		
@@ -337,6 +380,22 @@ class StaffDirectoryPlugin_SettingsPage
             '<textarea id="custom_css" name="sd_options[custom_css]" style="width:450px" />%s</textarea>',
             isset( $this->options['custom_css'] ) ? esc_attr( $this->options['custom_css']) : ''
         );
+    }
+	
+    public function custom_templates_callback()
+    {
+		$tpl_path = locate_template('single-staff-member.php');
+		if (strlen($tpl_path) > 1) {
+			printf(
+				'<p><strong>Single Staff Member: Custom template detected!</strong></p><p>The template file single-staff-member.php, located in your current theme\'s folder, will be used to display each staff member\'s single view.</p>'
+				);
+			
+		}
+		else {
+			printf(
+				'No custom templates detected.'
+				);
+		}
     }
 	
     public function print_registration_section_info()
