@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.4
+Version: 1.4.1
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -42,10 +42,13 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		add_shortcode('staff_list', array($this, 'staff_list_shortcode'));
 		add_shortcode('staff_member', array($this, 'staff_member_shortcode'));
 		add_action('init', array($this, 'remove_features_from_custom_post_type'));
-		/* Enable custom templates (currently only available for single staff members) */
+				
+		/* Allow the user to override the_content template for single staff members */
 		add_filter('the_content', array($this, 'single_staff_content_filter'));
+		
 		// add our custom meta boxes
 		add_action( 'admin_menu', array($this, 'add_meta_boxes'));
+		
 		//flush rewrite rules - only do this once!
 		register_activation_hook( __FILE__, array($this, 'rewrite_flush' ) );
 		
@@ -114,14 +117,14 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	{
 		$cssUrl = plugins_url( 'assets/css/staff-directory.css' , __FILE__ );
 		$this->add_stylesheet('staff-directory-css',  $cssUrl);		
-	}		
+	}
 	
 	function single_staff_content_filter($content)
 	{
 		if ( is_single() && get_post_type() == 'staff-member' ) {
 			global $staff_data;
 			$staff_data = $this->get_staff_data_for_post();
-			$template_content = $this->get_template_content('single-staff-member.php');
+			$template_content = $this->get_template_content('single-staff-member-content.php');
 			return $template_content;
 		}
 		return $content;
@@ -203,7 +206,7 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 			$staff_data = $this->get_staff_data_for_this_post($atts['id']);
 			
 			//build html using loaded data
-			$template_content = $this->get_template_content('single-staff-member.php');
+			$template_content = $this->get_template_content('single-staff-member-content.php');
 			
 			$html = $template_content;
 		}

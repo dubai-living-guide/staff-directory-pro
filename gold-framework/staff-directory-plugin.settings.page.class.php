@@ -384,10 +384,10 @@ class StaffDirectoryPlugin_SettingsPage
 	
     public function custom_templates_callback()
     {
-		$tpl_path = locate_template('single-staff-member.php');
+		$tpl_path = locate_template('single-staff-member-content.php');
 		if (strlen($tpl_path) > 1) {
 			printf(
-				'<p><strong>Single Staff Member: Custom template detected!</strong></p><p>The template file single-staff-member.php, located in your current theme\'s folder, will be used to display each staff member\'s single view.</p>'
+				'<p><strong>Single Staff Member: Custom template detected!</strong></p><p>The template file single-staff-member-content.php, located in your current theme\'s folder, will be used to display each staff member\'s single view.</p>'
 				);
 			
 		}

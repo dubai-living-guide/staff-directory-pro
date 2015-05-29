@@ -3,8 +3,8 @@ Contributors: richardgabriel, ghuger
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=V7HR8DP4EJSYN
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
-Tested up to: 4.2.1
-Stable tag: 1.4
+Tested up to: 4.2.2
+Stable tag: 1.4.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -102,6 +102,9 @@ Our plugin supports creating your own templates, and it includes one by default 
 
 == Changelog ==
 
+= 1.4.1 =
+* Fix: change custom template name for single staff members
+
 = 1.4 =
 * Adds message to indicate detection of custom templates
 * Adds CSV import/export (requires pro)
@@ -139,4 +142,4 @@ Initial Release!!
 
 == Upgrade Notice ==
 
-* 1.4: Adds custom template detection message (all versions), CSV import/export (Pro)
+* 1.4.1: Fix: change custom template name for single staff members
