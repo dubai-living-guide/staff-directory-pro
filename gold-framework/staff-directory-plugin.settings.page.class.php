@@ -83,6 +83,14 @@ class StaffDirectoryPlugin_SettingsPage
         );
 
 		add_settings_field(
+            'sd_include_in_search', // ID
+            'Include Staff Members In Search Results', // Title 
+            array( $this, 'include_in_search_callback' ), // Callback
+            'sd_general_settings', // Page
+            'general' // Section           
+        );  
+
+		add_settings_field(
             'sd_templates_detected', // ID
             'Custom Templates', // Title 
             array( $this, 'custom_templates_callback' ), // Callback
@@ -346,6 +354,10 @@ class StaffDirectoryPlugin_SettingsPage
 					$new_input[$key] = $input[$key]; //TBD: figure out proper sanitizing for CSS!
 				break;
 
+				case 'include_in_search':
+					$new_input[$key] = ($input[$key] ? 1 : 0);
+				break;
+
 				default: // don't let any settings through unless they were whitelisted. (skip unknown settings)
 					continue;
 				break;			
@@ -379,6 +391,23 @@ class StaffDirectoryPlugin_SettingsPage
         printf(
             '<textarea id="custom_css" name="sd_options[custom_css]" style="width:450px" />%s</textarea>',
             isset( $this->options['custom_css'] ) ? esc_attr( $this->options['custom_css']) : ''
+        );
+    }
+	
+	public function include_in_search_callback()
+    {
+		$checked =  isset( $this->options['include_in_search'] ) && $this->options['include_in_search'] == '0' ? '' : 'checked="checked"'; // defaults to checked
+		$input_html = sprintf('<input type="checkbox" id="sd_options_include_in_search" name="sd_options[include_in_search]" value="1" %s />', $checked);
+		$tmpl = 
+			'<label for="sd_options_include_in_search">' .
+				'<input type="hidden" name="sd_options[include_in_search]" value="0" />' .
+				$input_html .
+				'Include Staff Members in normal search results' . 
+            '</label>';
+			
+        printf(
+			$tmpl,
+            isset( $this->options['include_in_search'] ) ? esc_attr( $this->options['include_in_search']) : ''
         );
     }
 	

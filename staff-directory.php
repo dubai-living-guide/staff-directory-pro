@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.4.1
+Version: 1.4.2
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -41,6 +41,7 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	{
 		add_shortcode('staff_list', array($this, 'staff_list_shortcode'));
 		add_shortcode('staff_member', array($this, 'staff_member_shortcode'));
+		add_shortcode('search_staff_members', array($this, 'search_staff_members_shortcode'));
 		add_action('init', array($this, 'remove_features_from_custom_post_type'));
 				
 		/* Allow the user to override the_content template for single staff members */
@@ -64,7 +65,14 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	
 	function create_post_types()
 	{
-		$postType = array('name' => 'Staff Member', 'plural' => 'Staff Members', 'slug' => 'staff-members');
+		$options = get_option( 'sd_options' );		
+		$exclude_from_search = ( isset($options['include_in_search']) && $options['include_in_search'] == 0 );
+		$postType = array(
+			'name' => 'Staff Member',
+			'plural' => 'Staff Members',
+			'slug' => 'staff-members',
+			'exclude_from_search' => $exclude_from_search,
+		);
 		$customFields = array();
 		$customFields[] = array('name' => 'first_name', 'title' => 'First Name', 'description' => 'Steven, Anna', 'type' => 'text');	
 		$customFields[] = array('name' => 'last_name', 'title' => 'Last Name', 'description' => 'Example: Smith, Goldstein', 'type' => 'text');	
@@ -477,9 +485,6 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 			if ( $this->import_result !== false ) {
 				add_action( 'admin_notices', array( $this, 'display_import_notice' ) );
 			}
-			
-			///var_dump($res);
-			//exit();
 		}
 	}
 	
@@ -493,6 +498,23 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 			printf ("<div class='updated'><p>%s</p></div>", $msg);
 		}
 	}
+
+	function search_staff_members_shortcode()
+	{
+		add_filter('get_search_form', array($this, 'restrict_search_to_custom_post_type'), 10);
+		$search_html = get_search_form();
+		remove_filter('get_search_form', array($this, 'restrict_search_to_custom_post_type'));
+		return $search_html;
+	}
+	
+	function restrict_search_to_custom_post_type($search_html)
+	{
+		$post_type = 'staff-member';
+		$hidden_input = sprintf('<input type="hidden" name="post_type" value="%s">', $post_type);
+		$replace_with = $hidden_input . '</form>';
+		return str_replace('</form>', $replace_with, $search_html);
+	}
+
 	
 }
 $gp_sdp = new StaffDirectoryPlugin();

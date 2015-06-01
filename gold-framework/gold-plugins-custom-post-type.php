@@ -37,6 +37,7 @@ if (!class_exists('GoldPlugins_StaffDirectory_CustomPostType')):
 		{
 			$singular = ucwords($postType['name']);
 			$plural = isset($postType['plural']) ? ucwords($postType['plural']) : $singular . 's';
+			$exclude_from_search = isset($postType['exclude_from_search']) ? $postType['exclude_from_search'] : false;
 
 			$this->customPostTypeName = $this->clean_title($singular);
 			$this->customPostTypeSingular = $singular;
@@ -64,6 +65,7 @@ if (!class_exists('GoldPlugins_StaffDirectory_CustomPostType')):
 					'public' => true,
 					'publicly_queryable' => true,
 					'show_ui' => true, 
+					'exclude_from_search' => $exclude_from_search,
 					'query_var' => true,
 					'rewrite' => array( 'slug' => $postType['slug'], 'with_front' => (strlen($postType['slug'])>0) ? false : true),
 					'capability_type' => 'post',
