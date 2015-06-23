@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.4.2
+Version: 1.4.3
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -19,6 +19,8 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	var $plugin_title = 'Company Directory';
 	var $prefix = 'staff_dir';
 	var $proUser = false;
+	var $postType;
+	var $customFields;
 	
 	function __construct()
 	{	
@@ -60,6 +62,8 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		// catch CSV import/export trigger
 		add_action('admin_init', array($this, 'process_import_export'));
 		
+		add_action( 'save_post', array( &$this, 'update_name_fields' ), 1, 2 );
+		
 		parent::add_hooks();
 	}
 	
@@ -67,19 +71,19 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	{
 		$options = get_option( 'sd_options' );		
 		$exclude_from_search = ( isset($options['include_in_search']) && $options['include_in_search'] == 0 );
-		$postType = array(
+		$this->postType = array(
 			'name' => 'Staff Member',
 			'plural' => 'Staff Members',
 			'slug' => 'staff-members',
 			'exclude_from_search' => $exclude_from_search,
 		);
-		$customFields = array();
-		$customFields[] = array('name' => 'first_name', 'title' => 'First Name', 'description' => 'Steven, Anna', 'type' => 'text');	
-		$customFields[] = array('name' => 'last_name', 'title' => 'Last Name', 'description' => 'Example: Smith, Goldstein', 'type' => 'text');	
-		$customFields[] = array('name' => 'title', 'title' => 'Title', 'description' => 'Example: Director of Sales, Customer Service Team Member, Project Manager', 'type' => 'text');	
-		$customFields[] = array('name' => 'phone', 'title' => 'Phone', 'description' => 'Best phone number to reach this person', 'type' => 'text');
-		$customFields[] = array('name' => 'email', 'title' => 'Email', 'description' => 'Email address for this person', 'type' => 'text');
-		$this->add_custom_post_type($postType, $customFields);
+		$this->customFields = array();
+		$this->customFields[] = array('name' => 'first_name', 'title' => 'First Name', 'description' => 'Steven, Anna', 'type' => 'text');	
+		$this->customFields[] = array('name' => 'last_name', 'title' => 'Last Name', 'description' => 'Example: Smith, Goldstein', 'type' => 'text');	
+		$this->customFields[] = array('name' => 'title', 'title' => 'Title', 'description' => 'Example: Director of Sales, Customer Service Team Member, Project Manager', 'type' => 'text');	
+		$this->customFields[] = array('name' => 'phone', 'title' => 'Phone', 'description' => 'Best phone number to reach this person', 'type' => 'text');
+		$this->customFields[] = array('name' => 'email', 'title' => 'Email', 'description' => 'Email address for this person', 'type' => 'text');
+		$this->add_custom_post_type($this->postType, $this->customFields);
 		
 		//adds single staff member shortcode to staff member list
 		add_filter('manage_staff-member_posts_columns', array($this, 'column_head'), 10);  
@@ -342,8 +346,6 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 								),
 			);
 		}
-		
-		
 		return new WP_Query($conditions);
 	}
 	
@@ -374,8 +376,7 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );			
 		if(is_plugin_active($plugin)){
 			$this->proUser = true;
-		}
-		
+		}	
 	}
 	
 	function is_pro(){
@@ -384,6 +385,10 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 
 	//only do this once
 	function rewrite_flush() {		
+		//we need to manually create the CPT right now, so that we have something to flush the rewrite rules with!
+		$gpcpt = new GoldPlugins_StaffDirectory_CustomPostType($this->postType, $this->customFields);
+		$gpcpt->setupCustomPostType();
+		
 		flush_rewrite_rules();
 	}
 	
@@ -513,6 +518,30 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		$hidden_input = sprintf('<input type="hidden" name="post_type" value="%s">', $post_type);
 		$replace_with = $hidden_input . '</form>';
 		return str_replace('</form>', $replace_with, $search_html);
+	}
+	
+	/* If the user did not specify a first and/or last name field, set those fields now */
+	function update_name_fields($post_id, $post)
+	{
+		if ($post->post_type !== 'staff-member') {
+			return;
+		}
+		
+		$first_name = get_post_meta($post_id, '_ikcf_first_name', true);
+		$last_name = get_post_meta($post_id, '_ikcf_last_name', true);
+		$full_name = get_the_title($post_id);
+		
+		if (empty($first_name)) {
+			$f_pos = strpos($full_name, ' ');			
+			$f_name = ($f_pos !== FALSE) ? substr($full_name, 0, $f_pos) : $full_name;
+			update_post_meta($post_id, '_ikcf_first_name', $f_name);
+		}
+
+		if (empty($last_name)) {
+			$l_pos = strrpos($full_name, ' ');			
+			$l_name = ($f_pos !== FALSE) ? substr($full_name, $l_pos + 1) : $full_name;
+			update_post_meta($post_id, '_ikcf_last_name', $l_name);
+		}
 	}
 
 	
