@@ -24,7 +24,6 @@ if (!class_exists('GoldPlugins_StaffDirectory_CustomPostType')):
 		var $customPostTypeSingular = 'customPost';
 		var $customPostTypePlural = 'customPosts';
 		var $prefix = '_ikcf_';
-		var $postType;
 		
 		function clean_title($str)
 		{
@@ -34,13 +33,8 @@ if (!class_exists('GoldPlugins_StaffDirectory_CustomPostType')):
 		}
 	
 		
-		function setupCustomPostType($postType = false)
+		function setupCustomPostType($postType)
 		{
-			//if not passed directly, use the class variable
-			if(!$postType){
-				$postType = $this->postType;
-			}
-			
 			$singular = ucwords($postType['name']);
 			$plural = isset($postType['plural']) ? ucwords($postType['plural']) : $singular . 's';
 			$exclude_from_search = isset($postType['exclude_from_search']) ? $postType['exclude_from_search'] : false;
@@ -81,14 +75,14 @@ if (!class_exists('GoldPlugins_StaffDirectory_CustomPostType')):
 				); 
 				$this->customPostTypeArgs = $args;
 		
-				// register our post types!
-				$this->registerPostTypes();
+				// register hooks
+				add_action( 'init', array( &$this, 'registerPostTypes' ), 0 );
 			}
 		}
 
 		function registerPostTypes()
 		{
-			register_post_type($this->customPostTypeName,$this->customPostTypeArgs);
+		  register_post_type($this->customPostTypeName,$this->customPostTypeArgs);
 		}
 		
 		function setupCustomFields($fields)
@@ -227,9 +221,8 @@ if (!class_exists('GoldPlugins_StaffDirectory_CustomPostType')):
 
 		function __construct($postType, $customFields = false, $removeDefaultCustomFields = false)
 		{
-			$this->postType = $postType;
 			
-			add_action( 'init', array( $this, 'setupCustomPostType'));
+			$this->setupCustomPostType($postType);
 			
 			if ($customFields)
 			{

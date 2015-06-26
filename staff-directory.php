@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.4.3
+Version: 1.4.4
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -24,6 +24,7 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	
 	function __construct()
 	{	
+		$this->setup_post_type_metadata();
 		$this->create_post_types();
 		$this->register_taxonomies();
 		$this->add_hooks();
@@ -67,10 +68,10 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		parent::add_hooks();
 	}
 	
-	function create_post_types()
+	function setup_post_type_metadata()
 	{
 		$options = get_option( 'sd_options' );		
-		$exclude_from_search = ( isset($options['include_in_search']) && $options['include_in_search'] == 0 );
+		$exclude_from_search = ( isset($options['include_in_search']) && $options['include_in_search'] == 0 );		
 		$this->postType = array(
 			'name' => 'Staff Member',
 			'plural' => 'Staff Members',
@@ -82,7 +83,11 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		$this->customFields[] = array('name' => 'last_name', 'title' => 'Last Name', 'description' => 'Example: Smith, Goldstein', 'type' => 'text');	
 		$this->customFields[] = array('name' => 'title', 'title' => 'Title', 'description' => 'Example: Director of Sales, Customer Service Team Member, Project Manager', 'type' => 'text');	
 		$this->customFields[] = array('name' => 'phone', 'title' => 'Phone', 'description' => 'Best phone number to reach this person', 'type' => 'text');
-		$this->customFields[] = array('name' => 'email', 'title' => 'Email', 'description' => 'Email address for this person', 'type' => 'text');
+		$this->customFields[] = array('name' => 'email', 'title' => 'Email', 'description' => 'Email address for this person', 'type' => 'text');		
+	}
+	
+	function create_post_types()
+	{
 		$this->add_custom_post_type($this->postType, $this->customFields);
 		
 		//adds single staff member shortcode to staff member list
@@ -387,8 +392,6 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	function rewrite_flush() {		
 		//we need to manually create the CPT right now, so that we have something to flush the rewrite rules with!
 		$gpcpt = new GoldPlugins_StaffDirectory_CustomPostType($this->postType, $this->customFields);
-		$gpcpt->setupCustomPostType();
-		
 		flush_rewrite_rules();
 	}
 	
