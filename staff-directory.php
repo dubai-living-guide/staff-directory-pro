@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.4.4
+Version: 1.4.5
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -526,7 +526,16 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	/* If the user did not specify a first and/or last name field, set those fields now */
 	function update_name_fields($post_id, $post)
 	{
+		/* Only run on OUR custom post type */
 		if ($post->post_type !== 'staff-member') {
+			return;
+		}
+	
+		/* Only run when the user actually clicks save, NOT on auto saves or ajax */
+		if ( (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) 
+			 || (defined('DOING_AJAX') && DOING_AJAX)
+			 || ($post->post_status === 'auto-draft')
+		) {
 			return;
 		}
 		
@@ -534,19 +543,33 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		$last_name = get_post_meta($post_id, '_ikcf_last_name', true);
 		$full_name = get_the_title($post_id);
 		
+		/* Bail if the post has no title */
+		if (empty($full_name)) {
+			return;
+		}
+		
+		/* If no First Name is set, set it to the FIRST word in the post's title
+		 * NOTE: If the title has no spaces, this field will not be set
+		 */
 		if (empty($first_name)) {
-			$f_pos = strpos($full_name, ' ');			
-			$f_name = ($f_pos !== FALSE) ? substr($full_name, 0, $f_pos) : $full_name;
-			update_post_meta($post_id, '_ikcf_first_name', $f_name);
+			$first_space_pos = strpos($full_name, ' ');
+			$new_first_name = ($first_space_pos !== FALSE) ? substr($full_name, 0, $first_space_pos) : '';
+			if (!empty($new_first_name)) {
+				update_post_meta($post_id, '_ikcf_first_name', $new_first_name);
+			}
 		}
 
+		/* If no Last Name is set, set it to the LAST word in the post's title		
+		 * NOTE: If the title has no spaces, set Last Name to the full title
+		 */
 		if (empty($last_name)) {
-			$l_pos = strrpos($full_name, ' ');			
-			$l_name = ($f_pos !== FALSE) ? substr($full_name, $l_pos + 1) : $full_name;
-			update_post_meta($post_id, '_ikcf_last_name', $l_name);
+			$last_space_pos = strrpos($full_name, ' ');			
+			$new_last_name = ($last_space_pos !== FALSE) ? substr($full_name, $last_space_pos + 1) : $full_name;
+			if (!empty($new_last_name)) {
+				update_post_meta($post_id, '_ikcf_last_name', $new_last_name);
+			}
 		}
 	}
-
 	
 }
 $gp_sdp = new StaffDirectoryPlugin();
