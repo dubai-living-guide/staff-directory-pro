@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.4.5
+Version: 1.4.6
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -158,17 +158,61 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 							'style' => 'list',
 							'columns' => 'name,title,email,phone',
 							'category' => false,
+							'group_by_category' => false,
+							'category_order' 	=> 'ASC',
+							'category_orderby' 	=> 'name',
+							'category_heading_tag' 	=> 'h3',
 							'count' => -1
 						);
 		$atts = shortcode_atts($defaults, $atts);
 		$atts['columns'] = array_map('trim', explode(',', $atts['columns']));
 		
+		$html = '';
+		
 		// get a Custom Loop for the staff custom post type, and pass it to the template
-		$staff_loop = $this->get_staff_members_loop($atts['count'],$atts['category']);
-		
-		// $vars will be available in the template
-		$vars = array('staff_loop' => $staff_loop);
-		
+		if (!$atts['group_by_category'])
+		{
+			// do not group by category (default)
+			$vars['staff_loop'] = $this->get_staff_members_loop($atts['count'], $atts['category']);
+			$html = $this->render_staff_list($atts, $vars);
+		}
+		else
+		{
+			// group by category
+			$all_cats = $this->get_all_staff_categories($atts['category_order'], $atts['category_orderby']);
+			foreach($all_cats as $term) {
+				
+				// add heading
+				$heading_template = sprintf('<%s class="staff_category_heading" id="staff-category-heading-%%d">%%s</%s>', $atts['category_heading_tag'], $atts['category_heading_tag']);
+				$html .= sprintf($heading_template, $term->term_id, $term->name);
+			
+				// add loop html
+				$vars['staff_loop'] = $this->get_staff_members_loop($atts['count'], $term->slug);
+				$html .= $this->render_staff_list($atts, $vars);
+			}
+		}
+		return $html;
+	}
+	
+	// Get a list of all staff-member-category terms
+	// Pass $hide_empty = true to exclude empty categories
+	function get_all_staff_categories($orderby = 'name', $order = 'ASC', $hide_empty = false)
+	{
+		$taxonomies = array( 
+			'staff-member-category',
+		);
+
+		$args = array(
+			'orderby'           => $orderby, 	// default: 'name'
+			'order'             => $order,		// default: 'ASC'
+			'hide_empty'        => $hide_empty, // default: false
+		); 
+
+		return get_terms($taxonomies, $args);
+	}
+	
+	function render_staff_list($atts, $vars)
+	{
 		//only pro version of plugin can use styles other than List
 		if(!$this->is_pro()){
 			$atts['style'] = 'list';
@@ -351,6 +395,7 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 								),
 			);
 		}
+
 		return new WP_Query($conditions);
 	}
 	
@@ -392,6 +437,7 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	function rewrite_flush() {		
 		//we need to manually create the CPT right now, so that we have something to flush the rewrite rules with!
 		$gpcpt = new GoldPlugins_StaffDirectory_CustomPostType($this->postType, $this->customFields);
+		$gpcpt->registerPostTypes();
 		flush_rewrite_rules();
 	}
 	

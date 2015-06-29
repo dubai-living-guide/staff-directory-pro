@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.4.5
+Stable tag: 1.4.6
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -12,13 +12,11 @@ Company Directory is a simple-to-use plugin for adding Staff or Faculty Members 
 
 == Description ==
 
-The Company Directory is an easy way to add your Staff to your website.  Staff and Faculty are presented in several easy to understand layouts, including a list and single views, allowing visitors to get to know your company and capabilities.  Click through from your List, Grid, and Table views to a Single View.  Company Directory allows you to include a Job Title, Email Address, Phone Number, Photo, and Bio with each Staff or Faculty Member.
+The Company Directory is an easy way to add your Staff to your website.  Staff and Faculty are presented in several easy to understand layouts, including a list and single views, allowing visitors to get to know your company and capabilities. 
 
-= Premium Support =
+Company Directory allows you to include a Job Title, Email Address, Phone Number, Photo, and Bio with each Staff or Faculty Member.
 
-The GoldPlugins team does not provide direct support for the Company Directory plugin on the WordPress.org forums. One on one email support is available to people who have purchased Company Directory Pro only. Company Directory Pro also includes extra features, so you should [upgrade today!](http://goldplugins.com/our-plugins/company-directory-pro/upgrade-to-company-directory-pro/ "Upgrade to Company Directory Pro")
-
-The Pro Version of the Company Directory includes advanced features such as a Table View and Grid View, as well as direct support!
+Visitors will be able to click through from your List, Grid, and Table views to read more about each Staff Member in a customizeable Single View.
 
 = Display Your Staff and Faculty in an Easy to View Format =
 
@@ -27,6 +25,14 @@ Managing and displaying a large amount of Faculty or Staff on your website can b
 Using our simple shortcode system, website maintainers can insert a list, table, or grid of Staff or Faculty onto any WordPress Page!  This allows visitors to view your Staff or Faculty, find who they are looking for, and contact them directly!
 
 Our professional development team is continually improving and updating our plugin, so stay tuned for updates!
+
+= Premium Support Available =
+
+The GoldPlugins team does not provide direct support for the Company Directory plugin through the WordPress.org forums. However, direct email support is available to people who have purchased Company Directory Pro. 
+
+The Pro Version of Company Directory also includes advanced features such as CSV Import/Export, a Table View, and a Grid View, in addition to direct support! 
+
+[Upgrade To Pro Now!](http://goldplugins.com/our-plugins/company-directory-pro/upgrade-to-company-directory-pro/ "Upgrade to Company Directory Pro")
 
 == Installation ==
 
@@ -78,21 +84,49 @@ You have a few things to pay attention to:
 
 ### Displaying a List of Staff ###
 
-To display a list of staff on your website, use the shortcode ```[staff_list]``` in the page content area that you want them to appear.  To limit the Staff displayed to a specific category, use the shortcode ```[staff_list category='the_slug']```, where the value of ```category``` is the slug of the Category you want displayed.  You can locate the slugs by looking at the List of Staff Member Categories.   To display a Table of All Staff, use the shortcode ```[staff_list style='table']```.  To display a Grid of All Staff, use the shortcode ```[staff_list style='grid']```.  **Please Note:** Company Directory Pro is required to gain access to advanced features such as the Grid and Table views.
+To display a list of staff on your website, use the shortcode ```[staff_list]``` in the page content area that you want them to appear.  
+
+To limit the Staff displayed to a specific category, use the shortcode ```[staff_list category='the_slug']```, where the value of ```category``` is the slug of the Category you want displayed.  You can locate the slugs by looking at the List of Staff Member Categories.   
+
+To show all of your staff members, grouped by category, use the shortcode ```[staff_list group_by_category='true']```.  You can control the order of the categories by using the attributes category_order and category_orderby, but the default is to sort them by their last name, in ascending order.
+
+Tip: You can also use a plugin such as 'Category Order and Taxonomy Terms Order' to order your Staff Categories.
+
 
 ### Displaying a Single Staff Member ###
 
 To display a single Staff Member on your Website, use the shortcode ```[staff_member id="123"]```, where the value of id is the Staff Member's internal ID (you can get this shortcode by looking at the Staff Member List or the Edit Staff Member screen, inside WordPress.)
 
+#### PRO: Table and Grid Views #### 
+**Please Note:** Company Directory Pro is required to gain access to advanced features such as the Grid and Table views.
+
+To display a Table of all your Staff Members, use the shortcode ```[staff_list style='table']```.  
+
+To display a Grid of All Staff, use the shortcode ```[staff_list style='grid']```.  
+
+Both of these styles work seamlessly with the new Group By Category feature.
+
+
 == Frequently Asked Questions ==
 
-= Ack!  This Staff Directory is too easy to use! Will you make it more complicated? =
 
-Never!  Easy is in our name!  If by complicated you mean new and easy to use features, there are definitely some on the horizon!
+= Can I use my own custom templates? =
+
+Yes! You can use your own templates for both the staff list shortcode, and the content of single staff member pages. 
+
+To do so, navigate to the wp-content/plugins/staff-directory-pro/templates/ folder (note: this will vary a bit depending on your installation). In that folder you'll find a template file for staff-list.php and single-staff-member-content.php, which correspond to the [staff_list] shortcode and the single staff member pages, respectively. 
+
+Make a copy of the template you'd like to modify in your theme's directory, and change it as much or as little as you want. The plugin will automatically detect your template and use it instead.
+
+Please be aware, we do modify the base templates periodically, to add new features or make fixes. You will be responsible for keeping your custom templates up to date, but we will do our best to make it easy for you.
 
 = Hey! The Single Staff Member View isn't quite matching my theme - what do I do? =
 
 Our plugin supports creating your own templates, and it includes one by default for the Single Staff Member view.  If the Default HTML isn't right for you, go to the /staff-directory/templates/ folder and copy the file named "single-staff-member.php" to your Theme directory.  From there, you can modify this file as needed to get the HTML to work with your specific Theme.
+
+= Do you support CSV import / export = 
+
+Yes, but only in the Pro version.
 
 == Screenshots ==
 
@@ -102,7 +136,8 @@ Our plugin supports creating your own templates, and it includes one by default 
 
 == Changelog ==
 
-= 1.4.5 =
+= 1.4.6 =
+* Feature: Group staff members by category!
 * Fix: Staff Member's first and last names were being auto-detected incorrectly. Fixed.
 
 = 1.4.4 =
@@ -155,4 +190,4 @@ Initial Release!!
 
 == Upgrade Notice ==
 
-* 1.4.5: Fix error with new Staff Member's first and last names being auto-detected incorrectly.
+* 1.4.6: New Feature: Group staff members by category!
