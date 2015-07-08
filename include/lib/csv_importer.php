@@ -4,7 +4,7 @@ class StaffDirectoryPlugin_Importer
 	var $root;
 	var $last_error = '';
 	var $records_imported = 0;
-	static $csv_headers = array('Full Name','Body','First Name','Last Name','Title','Phone','Email','Categories');
+	static $csv_headers = array('Full Name','Body','First Name','Last Name','Title','Phone','Email','Address','Website','Categories');
 	
     public function __construct($root)
     {
@@ -128,12 +128,16 @@ class StaffDirectoryPlugin_Importer
 				$title = isset($post['Title']) ? $post['Title'] : "";
 				$phone = isset($post['Phone']) ? $post['Phone'] : "";
 				$email = isset($post['Email']) ? $post['Email'] : "";
+				$address = isset($post['Address']) ? $post['Address'] : "";
+				$website = isset($post['Website']) ? $post['Website'] : "";
 								
 				update_post_meta( $new_id, '_ikcf_first_name', $first_name );
 				update_post_meta( $new_id, '_ikcf_last_name', $last_name );
 				update_post_meta( $new_id, '_ikcf_title', $title );
 				update_post_meta( $new_id, '_ikcf_phone', $phone );
 				update_post_meta( $new_id, '_ikcf_email', $email );
+				update_post_meta( $new_id, '_ikcf_address', $address );
+				update_post_meta( $new_id, '_ikcf_website', $website );
 				
 				// Successfully added the post! Update success_count and continue.
 				$messages[] = sprintf("Successfully imported '%s!'", $full_name);

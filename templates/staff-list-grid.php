@@ -1,10 +1,8 @@
 <div class="staff-grid">
 	<?php if($staff_loop->have_posts()): while($staff_loop->have_posts()): $staff_loop->the_post(); ?>
 		<?php
-			$my_phone = get_post_meta(get_the_ID(), '_ikcf_phone', true);			
-			$my_email = get_post_meta(get_the_ID(), '_ikcf_email', true);
-			$my_title = get_post_meta(get_the_ID(), '_ikcf_title', true);
-		?>
+			extract ( cd_get_staff_metadata(get_the_ID(), $options) );
+		?>	
 		<div class="staff-member">		
 			<div class="staff-member-wrap">
 				<?php if ( has_post_thumbnail() ): ?>

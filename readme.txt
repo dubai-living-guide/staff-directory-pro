@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.4.6
+Stable tag: 1.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -133,8 +133,14 @@ Yes, but only in the Pro version.
 1. This is the Add New Staff Member Page.
 2. This is the List of Staff Members - from here you can Edit or Delete a Staff Member.
 3. This is an example of the Staff List being displayed on the 2014 WordPress theme.
+4. This is the Staff List Widget.
 
 == Changelog ==
+
+= 1.5 =
+* Feature: Staff List widget
+* Feature: Adds mailing address and website fields to Staff Members
+* General: Clean up / extend staff-list and and single-staff-member-content templates
 
 = 1.4.6 =
 * Feature: Group staff members by category!
@@ -190,4 +196,4 @@ Initial Release!!
 
 == Upgrade Notice ==
 
-* 1.4.6: New Feature: Group staff members by category!
+* 1.5: New Staff List widget! Also, new Staff Member fields: mailing address and website. 

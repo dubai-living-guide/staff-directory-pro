@@ -14,11 +14,6 @@
 		</thead>
 		<tbody>		
 		<?php if($staff_loop->have_posts()): while($staff_loop->have_posts()): $staff_loop->the_post(); ?>
-		<?php
-			$my_phone = get_post_meta(get_the_ID(), '_ikcf_phone', true);			
-			$my_email = get_post_meta(get_the_ID(), '_ikcf_email', true);
-			$my_title = get_post_meta(get_the_ID(), '_ikcf_title', true);
-		?>
 			<tr>
 				<?php 
 					foreach($columns as $col_key)
@@ -36,6 +31,30 @@
 							case 'bio':
 								// return the post body
 								$val = get_the_content();
+							break;
+							
+							case 'photo':
+								// return the featured image
+								$img = get_the_post_thumbnail(get_the_ID(), 'thumbnail');
+								$val = sprintf('<a href="%s">%s</a>', get_the_permalink(), $img);
+							break;
+
+							case 'email':
+								// return the email, linked with 'mailto'
+								$email = get_post_meta(get_the_ID(), '_ikcf_email', true);
+								$val = sprintf('<a href="mailto:%s">%s</a>', $email, $email);
+							break;
+							
+							case 'phone':
+								// return the email, linked with 'mailto'
+								$phone = get_post_meta(get_the_ID(), '_ikcf_phone', true);
+								$val = sprintf('<a href="tel:%s">%s</a>', $phone, $phone);
+							break;
+
+							case 'website':
+								// return the featured image
+								$img = get_the_post_thumbnail(get_the_ID(), 'thumbnail');
+								$val = sprintf('<a href="%s">%s</a>', get_the_permalink(), $img);
 							break;
 
 							default:

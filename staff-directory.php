@@ -4,13 +4,14 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.4.6
+Version: 1.5
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
 require_once('gold-framework/plugin-base.php');
 require_once('gold-framework/staff-directory-plugin.settings.page.class.php');
 require_once('include/sd_kg.php');
+require_once('include/staff_list_widget.php');
 require_once('include/lib/csv_importer.php');
 require_once('include/lib/csv_exporter.php');
 
@@ -21,6 +22,7 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	var $proUser = false;
 	var $postType;
 	var $customFields;
+	var $in_widget = false;
 	
 	function __construct()
 	{	
@@ -65,7 +67,15 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		
 		add_action( 'save_post', array( &$this, 'update_name_fields' ), 1, 2 );
 		
+		//register sidebar widgets
+		add_action( 'widgets_init', array( &$this, 'register_widgets') );
+		
 		parent::add_hooks();
+	}
+	
+	function register_widgets()
+	{
+		register_widget( 'GP_Staff_List_Widget' );
 	}
 	
 	function setup_post_type_metadata()
@@ -84,6 +94,8 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		$this->customFields[] = array('name' => 'title', 'title' => 'Title', 'description' => 'Example: Director of Sales, Customer Service Team Member, Project Manager', 'type' => 'text');	
 		$this->customFields[] = array('name' => 'phone', 'title' => 'Phone', 'description' => 'Best phone number to reach this person', 'type' => 'text');
 		$this->customFields[] = array('name' => 'email', 'title' => 'Email', 'description' => 'Email address for this person', 'type' => 'text');		
+		$this->customFields[] = array('name' => 'address', 'title' => 'Mailing Address', 'description' => 'Mailing address for this person', 'type' => 'textarea');		
+		$this->customFields[] = array('name' => 'website', 'title' => 'Website', 'description' => 'Website URL for this person', 'type' => 'text');		
 	}
 	
 	function create_post_types()
@@ -138,7 +150,7 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	
 	function single_staff_content_filter($content)
 	{
-		if ( is_single() && get_post_type() == 'staff-member' ) {
+		if ( empty($this->in_widget) && is_single() && get_post_type() == 'staff-member' ) {
 			global $staff_data;
 			$staff_data = $this->get_staff_data_for_post();
 			$template_content = $this->get_template_content('single-staff-member-content.php');
@@ -155,6 +167,14 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		// merge any settings specified by the shortcode with our defaults
 		$defaults = array(	'caption' => '',
 							'show_photos' => 'true',
+							'show_name' => 'true',
+							'show_title' => 'true',
+							'show_bio' => 'true',
+							'show_photo' => 'true',
+							'show_phone' => 'true',
+							'show_email' => 'true',
+							'show_address' => 'true',
+							'show_website' => 'true',
 							'style' => 'list',
 							'columns' => 'name,title,email,phone',
 							'category' => false,
@@ -162,10 +182,12 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 							'category_order' 	=> 'ASC',
 							'category_orderby' 	=> 'name',
 							'category_heading_tag' 	=> 'h3',
-							'count' => -1
+							'count' => -1,
+							'in_widget' => false,
 						);
 		$atts = shortcode_atts($defaults, $atts);
 		$atts['columns'] = array_map('trim', explode(',', $atts['columns']));
+		$this->in_widget = !empty($atts['in_widget']) ? true : false;
 		
 		$html = '';
 		
@@ -191,6 +213,10 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 				$html .= $this->render_staff_list($atts, $vars);
 			}
 		}
+		
+		// always reset in_widget to false
+		$this->in_widget = false;
+		
 		return $html;
 	}
 	
@@ -217,6 +243,8 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		if(!$this->is_pro()){
 			$atts['style'] = 'list';
 		}
+		
+		$vars['options'] = $atts;
 		
 		// render the 'template-staff-list.php' file (can be overridden by a file with the same name in the active theme)
 		switch ($atts['style'])
@@ -333,9 +361,10 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 		$ret['phone'] = $this->get_option_value($staff->ID, 'phone','');
 		$ret['email'] = $this->get_option_value($staff->ID, 'email','');
 		$ret['title'] = $this->get_option_value($staff->ID, 'title','');
+		$ret['address'] = $this->get_option_value($staff->ID, 'address','');
+		$ret['website'] = $this->get_option_value($staff->ID, 'website','');
 		$ret['first_name'] = $this->get_option_value($staff->ID, 'first_name','');
 		$ret['last_name'] = $this->get_option_value($staff->ID, 'last_name','');
-		
 		return $ret;
 	}
 	
@@ -619,3 +648,23 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 	
 }
 $gp_sdp = new StaffDirectoryPlugin();
+
+function cd_get_staff_metadata($id, $options = array())
+{
+		
+	$r['my_phone'] = get_post_meta($id, '_ikcf_phone', true);
+	$r['my_email'] = get_post_meta($id, '_ikcf_email', true);
+	$r['my_title'] = get_post_meta($id, '_ikcf_title', true);
+	$r['my_website'] = htmlspecialchars( get_post_meta($id, '_ikcf_website', true) );
+	$r['my_address'] = htmlspecialchars( get_post_meta($id, '_ikcf_address', true) );
+	$r['show_title'] = isset($options['show_title']) ? $options['show_title'] : true;
+	$r['show_address'] = isset($options['show_address']) ? $options['show_address'] : true;
+	$r['show_phone'] = isset($options['show_phone']) ? $options['show_phone'] : true;
+	$r['show_name'] = isset($options['show_bio']) ? $options['show_name'] : true;
+	$r['show_bio'] = isset($options['show_bio']) ? $options['show_bio'] : true;
+	$r['show_photo'] = isset($options['show_photo']) ? $options['show_photo'] : true;
+	$r['show_email'] = isset($options['show_email']) ? $options['show_email'] : true;
+	$r['show_website'] = isset($options['show_website']) ? $options['show_website'] : true;
+	
+	return $r;
+}

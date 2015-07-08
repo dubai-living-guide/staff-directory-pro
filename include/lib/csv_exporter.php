@@ -1,8 +1,8 @@
 <?php
 class StaffDirectoryPlugin_Exporter
 {
-	var $csv_headers = array('Full Name','Body','First Name','Last Name','Title','Phone','Email','Categories');
-
+	var $csv_headers = array('Full Name','Body','First Name','Last Name','Title','Phone','Email','Address','Website','Categories');
+	
 	public static function get_csv_headers()
 	{
 		return $csv_headers;
@@ -73,6 +73,8 @@ class StaffDirectoryPlugin_Exporter
 			$row['title'] = get_post_meta( $post->ID, '_ikcf_title', true );
 			$row['phone'] = get_post_meta( $post->ID, '_ikcf_phone', true );
 			$row['email'] = get_post_meta( $post->ID, '_ikcf_email', true );
+			$row['address'] = get_post_meta( $post->ID, '_ikcf_address', true );
+			$row['website'] = get_post_meta( $post->ID, '_ikcf_website', true );
 			$row['categories'] = $this->list_taxonomy_ids( $post->ID, 'staff-member-category' );			
 			fputcsv($fh, $row);
 		}

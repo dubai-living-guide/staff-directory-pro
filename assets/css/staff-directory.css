@@ -19,19 +19,20 @@
     max-width: 100%;
 }
 
-	/* "Circles" avatars */
-	.circles .staff-member .staff-photo
-	{
-		border-radius: 150px
-	}
-	.circles .staff-member .staff-photo img
-	{
-		border-radius: 150px;
-		box-shadow: 0 0 20px rgba(0, 0, 0, 1) inset;
-		float: left;
-		margin: 8px;
-		max-width: 100%;
-	}
+/* "Circles" avatars */
+.circles .staff-member .staff-photo
+{
+	border-radius: 150px
+}
+
+.circles .staff-member .staff-photo img
+{
+	border-radius: 150px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 1) inset;
+	float: left;
+	margin: 8px;
+	max-width: 100%;
+}
 
 .staff-member .staff-member-right
 {
@@ -43,6 +44,15 @@
 	text-transform: uppercase;
 	font-size: 12px;
 }
+
+.staff-member .staff-member-address h4
+{
+	font-size: 17px;
+	font-variant: small-caps;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
 .staff-member .staff-member-contacts
 {
 
@@ -184,4 +194,24 @@
 	clear: right;
 	line-height: normal;
 	margin-bottom: 10px;
+}
+
+/* Compact mode, for display in sidebars */
+.GP_Staff_List_Widget_Compact .staff-member-right {
+	margin-left: 0;
+}
+
+.GP_Staff_List_Widget_Compact .staff-photo {
+	float: none;
+	margin-left: 0;
+	margin-right: 0;
+	box-sizing: border-box;
+	padding: 8px;
+}
+
+.GP_Staff_List_Widget_Compact .staff-photo img {
+	float: none;
+	margin: 0;
+	width: 100%;
+	max-width: none;
 }

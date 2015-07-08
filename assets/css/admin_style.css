@@ -516,3 +516,23 @@
 	font-weight: bold;
 	padding: 10px 15px;
 }
+
+
+/* Widget styling (in admin) */
+.gp_admin_widget_fieldset {
+	border: 1px solid lightgray;
+    margin: 30px 0 40px;
+    padding: 10px 17px;
+}
+
+.gp_admin_widget_fieldset legend {
+    margin-left: -4px;
+    padding: 0 4px;
+}
+
+.gp_admin_widget_fieldset > p {
+    margin: 10px 3px;
+    
+}
+
+
