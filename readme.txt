@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.5
+Stable tag: 1.5.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -137,6 +137,9 @@ Yes, but only in the Pro version.
 
 == Changelog ==
 
+= 1.5.1 =
+* Fix: add widget file.
+
 = 1.5 =
 * Feature: Staff List widget
 * Feature: Adds mailing address and website fields to Staff Members
@@ -196,4 +199,4 @@ Initial Release!!
 
 == Upgrade Notice ==
 
-* 1.5: New Staff List widget! Also, new Staff Member fields: mailing address and website. 
+* 1.5.1: New Staff List widget! Also, new Staff Member fields: mailing address and website. 
