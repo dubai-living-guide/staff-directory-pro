@@ -4,7 +4,7 @@ Plugin Name: Company Directory
 Plugin Script: staff-directory.php
 Plugin URI: http://goldplugins.com/our-plugins/company-directory/
 Description: Create a directory of your staff members and show it on your website!
-Version: 1.5.1
+Version: 1.6
 Author: GoldPlugins
 Author URI: http://goldplugins.com/
 */
@@ -51,6 +51,9 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 				
 		/* Allow the user to override the_content template for single staff members */
 		add_filter('the_content', array($this, 'single_staff_content_filter'));
+		
+		/* Allow the user to override search form for staff members */
+		add_filter('search_template', array($this, 'use_custom_search_template'));
 		
 		// add our custom meta boxes
 		add_action( 'admin_menu', array($this, 'add_meta_boxes'));
@@ -157,6 +160,16 @@ class StaffDirectoryPlugin extends StaffDirectory_GoldPlugin
 			return $template_content;
 		}
 		return $content;
+	}
+	
+	function use_custom_search_template($original_template)
+	{
+		if ( !empty($_REQUEST['post_type']) && $_REQUEST['post_type'] == 'staff-member' ) {
+			$custom_template = locate_template('search-staff-members.php');
+			return !empty($custom_template) ? $custom_template : $original_template;
+		} else {
+			return $original_template;
+		}
 	}
 
 	/* Shortcodes */

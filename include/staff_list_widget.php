@@ -15,18 +15,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Company Directory.  If not, see <http://www.gnu.org/licenses/>.
 
-Shout out to http://www.makeuseof.com/tag/how-to-create-wordpress-widgets/ for the help
 */
 
 class GP_Staff_List_Widget extends WP_Widget
 {
-	function GP_Staff_List_Widget()
+	function __construct()
 	{
 		$widget_ops = array(
 			'classname' => 'GP_Staff_List_Widget GP_Staff_List_Widget_Compact',
 			'description' => 'Displays a list of your staff.'
 		);
-		$this->WP_Widget('GP_Staff_List_Widget', 'Staff List', $widget_ops);
+		parent::__construct('GP_Staff_List_Widget', 'Staff List', $widget_ops);
 	}
 
 	function form($instance){

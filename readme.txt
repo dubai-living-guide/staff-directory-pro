@@ -3,8 +3,8 @@ Contributors: richardgabriel, ghuger
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=V7HR8DP4EJSYN
 Tags: staff, directory, directory plugin, staff directory, staff skills, skills matrix, directory with contact form, staff skills matrix, staff skills directory
 Requires at least: 3.5
-Tested up to: 4.2.2
-Stable tag: 1.5.1
+Tested up to: 4.3
+Stable tag: 1.6
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -97,6 +97,14 @@ Tip: You can also use a plugin such as 'Category Order and Taxonomy Terms Order'
 
 To display a single Staff Member on your Website, use the shortcode ```[staff_member id="123"]```, where the value of id is the Staff Member's internal ID (you can get this shortcode by looking at the Staff Member List or the Edit Staff Member screen, inside WordPress.)
 
+### Create your own Templates ###
+
+Create your own templates for the staff list shortcode, the content of single staff member pages, and the staff search results page
+
+To do so, navigate to the wp-content/plugins/staff-directory-pro/templates/ folder (note: this will vary a bit depending on your installation). In that folder you'll find a template file for staff-list.php and single-staff-member-content.php, which correspond to the [staff_list] shortcode and the single staff member pages, respectively. 
+
+To create a search staff results page, navigate to your theme's folder copy index.php or search.php to search-staff-members.php, and make a visible change. Confirm that you see the visible change when searching for staff members.  If you are, you've setup the template right!
+
 #### PRO: Table and Grid Views #### 
 **Please Note:** Company Directory Pro is required to gain access to advanced features such as the Grid and Table views.
 
@@ -112,9 +120,11 @@ Both of these styles work seamlessly with the new Group By Category feature.
 
 = Can I use my own custom templates? =
 
-Yes! You can use your own templates for both the staff list shortcode, and the content of single staff member pages. 
+Yes! You can use your own templates for the staff list shortcode, the content of single staff member pages, and the staff search results page.
 
 To do so, navigate to the wp-content/plugins/staff-directory-pro/templates/ folder (note: this will vary a bit depending on your installation). In that folder you'll find a template file for staff-list.php and single-staff-member-content.php, which correspond to the [staff_list] shortcode and the single staff member pages, respectively. 
+
+To create a search staff results page, navigate to your theme's folder copy index.php or search.php to search-staff-members.php, and make a visible change. Confirm that you see the visible change when searching for staff members.  If you are, you've setup the template right!
 
 Make a copy of the template you'd like to modify in your theme's directory, and change it as much or as little as you want. The plugin will automatically detect your template and use it instead.
 
@@ -136,6 +146,9 @@ Yes, but only in the Pro version.
 4. This is the Staff List Widget.
 
 == Changelog ==
+
+= 1.6 =
+* New Feature: Customizable Search Staff Template
 
 = 1.5.1 =
 * Fix: add widget file.
@@ -199,4 +212,4 @@ Initial Release!!
 
 == Upgrade Notice ==
 
-* 1.5.1: New Staff List widget! Also, new Staff Member fields: mailing address and website. 
+* 1.6: New Feature: Customizable Search Staff Template
